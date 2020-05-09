@@ -16,6 +16,9 @@
  */
 package me.suesslab.rogueblight.item;
 
+import com.google.gson.JsonObject;
+import me.suesslab.rogueblight.entity.Entity;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -26,9 +29,18 @@ import java.util.UUID;
  * @author justin
  */
 public final class Inventory {
-    
+
+
+    private Entity parent;
     private ArrayList<Item> items;
-    
+
+    public Inventory(Entity parent) {
+        this.parent = parent;
+    }
+
+    public Inventory(Entity parent, JsonObject json) {
+
+    }
     public int getItemCount() {
         return items.size();
     }

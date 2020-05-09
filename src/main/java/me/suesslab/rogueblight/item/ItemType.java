@@ -17,6 +17,10 @@
 package me.suesslab.rogueblight.item;
 
 import com.google.gson.JsonObject;
+import me.suesslab.rogueblight.entity.Entity;
+import me.suesslab.rogueblight.entity.EntityInstance;
+import me.suesslab.rogueblight.world.IWorld;
+
 import java.util.UUID;
 
 /**
@@ -24,17 +28,15 @@ import java.util.UUID;
  * @author justin
  */
 public abstract class ItemType {
-    
+
     private String name;
     private UUID id;
     protected JsonObject config;
-    protected IItemBehavior body;
-    
-    private ItemType(String name, JsonObject config, IItemBehavior body) {
+
+    protected ItemType(String name, JsonObject config) {
         this.name = name;
         this.id = UUID.nameUUIDFromBytes(name.getBytes());
         this.config = config;
-        this.body = body;
     }
     
     public final UUID getId() {
@@ -49,9 +51,9 @@ public abstract class ItemType {
         return config;
     }
     
-    protected final IItemBehavior getBody() {
-        return body;
-    }
+    protected abstract ItemInstance getBody(Item t);
     
-    public abstract Item create(JsonObject input);
+    public abstract Item create(JsonObject input, UUID uuid, IWorld world);
+    
+    
 }

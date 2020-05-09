@@ -14,34 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package me.suesslab.rogueblight.entity;
+package me.suesslab.rogueblight.item;
+
+import me.suesslab.rogueblight.entity.Entity;
+import me.suesslab.rogueblight.entity.ILivingComponent;
+import me.suesslab.rogueblight.interact.Interaction;
 
 import java.util.Optional;
-import me.suesslab.rogueblight.interact.EntityEntityInteraction;
-import me.suesslab.rogueblight.interact.Interaction;
-import me.suesslab.rogueblight.interact.TooledInteraction;
-import me.suesslab.rogueblight.item.Inventory;
+import java.util.UUID;
 
 /**
  **
  * @author justin
  */
-public interface IEntityBehavior {
-    
+public abstract class ItemInstance {
+
+    private Item instance;
+
+    public ItemInstance(Item t) {
+        instance = t;
+    }
+
+    protected Item getEntity() {
+        return instance;
+    }
     //Interactions
     
-    public void touch(Interaction action, Entity self, String message);
+    public abstract void touch(Interaction action, String message);
     
     
     
     //Queries
     
-    public double queryMass(Entity self);
-    
-    //Components
-    
-    public Optional<Inventory> getInventoryComponent();
-    
-    public Optional<ILivingComponent> getLivingComponent();
+    public abstract double queryMass();
+
     
 }

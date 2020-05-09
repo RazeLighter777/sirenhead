@@ -17,6 +17,8 @@
 package me.suesslab.rogueblight.entity;
 
 import com.google.gson.JsonObject;
+import me.suesslab.rogueblight.world.IWorld;
+
 import java.util.UUID;
 
 /**
@@ -29,14 +31,15 @@ public final class Entity {
     
     private UUID uuid;
     
-    public IEntityBehavior body;
+    public EntityInstance body;
     
+    private IWorld world;
     
-    
-    public Entity(EntityType type, UUID uuid) {
+    public Entity(EntityType type, UUID uuid, IWorld worldInterface) {
         this.type = type;
-        body = type.getBody();
+        body = type.getBody(this);
         this.uuid = uuid;
+        this.world = worldInterface;
     }
     
     private EntityType type;
@@ -56,6 +59,9 @@ public final class Entity {
     public final String getQualifiedName() {
         return getData().get("name").getAsString();
     }
-    
+
+    public final IWorld getWorld() {
+        return world;
+    }
     
 }

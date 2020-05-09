@@ -16,42 +16,45 @@
  */
 package me.suesslab.rogueblight.entity;
 
-import com.google.gson.JsonObject;
-import me.suesslab.rogueblight.world.IWorld;
-
+import java.util.Optional;
 import java.util.UUID;
 
+import me.suesslab.rogueblight.interact.EntityEntityInteraction;
+import me.suesslab.rogueblight.interact.Interaction;
+import me.suesslab.rogueblight.interact.TooledInteraction;
+import me.suesslab.rogueblight.item.Inventory;
+
 /**
- *
+ **
  * @author justin
  */
-public abstract class EntityType {
-    
-    private String name;
-    private UUID id;
-    protected JsonObject config;
-    
-    protected EntityType(String name, JsonObject config) {
-        this.name = name;
-        this.id = UUID.nameUUIDFromBytes(name.getBytes());
-        this.config = config;
+public abstract class EntityInstance {
+
+    private Entity instance;
+
+    public EntityInstance(Entity t) {
+        instance = t;
     }
-    
-    public final UUID getId() {
-        return id;
+
+    protected Entity getEntity() {
+        return instance;
     }
+    //Interactions
     
-    public final String getName() {
-        return name;
-    }
+    public abstract void touch(Interaction action, String message);
     
-    public final JsonObject getConfig() {
-        return config;
-    }
     
-    protected abstract EntityInstance getBody(Entity t);
     
-    public abstract Entity create(JsonObject input, UUID uuid, IWorld world);
+    //Queries
     
+    public abstract double queryMass();
+
+    public abstract Optional<UUID> getPresentedItem();
+
+    //Components
+    
+    public abstract Optional<Inventory> getInventoryComponent();
+    
+    public abstract Optional<ILivingComponent> getLivingComponent();
     
 }

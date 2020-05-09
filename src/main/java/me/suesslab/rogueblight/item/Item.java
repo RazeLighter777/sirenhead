@@ -17,6 +17,10 @@
 package me.suesslab.rogueblight.item;
 
 import com.google.gson.JsonObject;
+import me.suesslab.rogueblight.entity.EntityInstance;
+import me.suesslab.rogueblight.entity.EntityType;
+import me.suesslab.rogueblight.world.IWorld;
+
 import java.util.UUID;
 
 /**
@@ -24,24 +28,26 @@ import java.util.UUID;
  * @author justin
  */
 public final class Item {
-    
+
     private JsonObject data;
-    
-    private final UUID uuid;
-    
-    private Inventory inventory; 
+
+    private UUID uuid;
+
+    public ItemInstance body;
+
+
+    private Inventory parent;
+
+    public Item(ItemType type, UUID uuid, Inventory parent) {
+        this.type = type;
+        body = type.getBody(this);
+        this.uuid = uuid;
+        this.parent = parent;
+    }
     
     private ItemType type;
     
-    public IItemBehavior body;
-    
-    protected Item(ItemType type, UUID uuid, Inventory inventory) {
-        this.type = type;
-        this.uuid = uuid;
-        this.inventory = inventory;
-    }
-    
-    public final ItemType getType() { 
+    public final ItemType getType() {
         return type;
     }
     
@@ -56,13 +62,10 @@ public final class Item {
     public final String getQualifiedName() {
         return getData().get("name").getAsString();
     }
-    
-    public final Inventory getInventory() {
-        return inventory;
+
+    public void registerParent(Inventory inventory) {
+        this.parent = inventory;
     }
-    
-    protected final void registerParent(Inventory i) {
-        this.inventory = i;
-    }
+
     
 }
