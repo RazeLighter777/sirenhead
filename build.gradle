@@ -44,6 +44,6 @@ apply plugin: 'application'
 
 mainClassName = 'me.suesslab.rogueblight.Main'
 release {
-	failOnCommitNeeded=false
-	failOnPublishNeeded=false
+	failOnCommitNeeded=true
+	failOnPublishNeeded=true
 }
