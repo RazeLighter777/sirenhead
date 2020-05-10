@@ -22,7 +22,7 @@ public class ItemContainerTest extends TestCase {
                 "\"type\" : \"itemContainer\",\n" +
                 "\"name\" : \"Test Container\"\n" +
                 "}\n").getAsJsonObject();
-        Entity container = containerType.create(data, UUID.fromString("123e4567-e89b-12d3-a456-556642440000"), new IWorld() {
+        Entity container = containerType.create(data, new IWorld() {
             @Override
             public int hashCode() {
                 return super.hashCode();

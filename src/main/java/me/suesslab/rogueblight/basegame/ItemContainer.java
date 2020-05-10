@@ -8,6 +8,7 @@ import me.suesslab.rogueblight.entity.ILivingComponent;
 import me.suesslab.rogueblight.interact.Interaction;
 import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.Item;
+import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.world.IWorld;
 
 import java.util.Optional;
@@ -24,15 +25,19 @@ public class ItemContainer extends EntityType {
     }
 
     @Override
-    public Entity create(JsonObject input, UUID uuid, IWorld world) {
-        return new Entity(this, uuid,world, input );
+    public Entity create(JsonObject input, IWorld world) {
+        return new Entity(this ,world, input );
     }
 
-    public Entity create(Inventory i, UUID itemId, IWorld world, UUID uuid) {
+    public Entity create(Inventory i, UUID itemId, IWorld world, UUID uuid, Position pos) {
         JsonObject defaultJson = new JsonObject();
-        Entity result = create(null, uuid, world);
+        defaultJson.addProperty("name", i.getItemByUUID(uuid).get().getQualifiedName());
+        defaultJson.addProperty("uuid", itemId.toString());
+        defaultJson.add("position", pos.getJSON());
+        Entity result = null;
         Optional<Item> op = i.getItemByUUID(itemId);
         if (op.isPresent()) {
+            result = create(defaultJson, world);
             Inventory.transferItem(i, result.body.getInventoryComponent().get(), op.get());
             return result;
         } else {

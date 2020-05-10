@@ -54,7 +54,7 @@ public abstract class EntityType {
     
     protected abstract EntityInstance getBody(Entity t);
     
-    public abstract Entity create(JsonObject input, UUID uuid, IWorld world);
+    public abstract Entity create(JsonObject input, IWorld world);
     
     
 }

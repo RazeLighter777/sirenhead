@@ -11,7 +11,7 @@ public class Main {
      */
     public static void main(String[] args) {
         SubsystemManager manager = SubsystemManager.getInstance();
-
+        manager.requestShutdown();
         return;
     }
 }

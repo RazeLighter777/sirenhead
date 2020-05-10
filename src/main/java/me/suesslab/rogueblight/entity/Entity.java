@@ -40,13 +40,15 @@ public final class Entity {
     private Position position;
 
 
-    public Entity(EntityType type, UUID uuid, IWorld worldInterface, JsonObject input) {
+    public Entity(EntityType type, IWorld worldInterface, JsonObject input) {
         //load the data variable.
         data = input;
         //Instantiate the position
         position = new Position(0, 0);
         JsonArray position = data.getAsJsonArray("position");
         getPos().setJSON(data.getAsJsonArray("position"));
+        //Instantiate the uuid
+        uuid = UUID.fromString(data.get("uuid").getAsString());
         //Set the entity data
         this.type = type;
         this.uuid = uuid;

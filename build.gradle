@@ -20,6 +20,16 @@ if (!hasProperty('mainClass')) {
     ext.mainClass = 'me.suesslab.rogueblight.Main'
 }
 
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Fat Jar Release',
+        	'Main-Class': 'me.suesslab.rogueblight.Main'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
 
 
 repositories {
