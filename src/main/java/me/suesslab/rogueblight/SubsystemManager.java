@@ -30,6 +30,14 @@ public class SubsystemManager {
 
     private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
+    private static SubsystemManager mInstance;
+
+    public static SubsystemManager getInstance() {
+        if (mInstance == null) {
+            mInstance = new SubsystemManager();
+        }
+        return mInstance;
+    }
     List<Subsystem> subs = Arrays.asList(new Subsystem[]{
         new Display()
     }
@@ -54,4 +62,10 @@ public class SubsystemManager {
         shutdown();
         return false;
     }
+
+    //Returns the path to the directory the program is operating in.
+    public String getDataPath() {
+        return ".";
+    }
+
 }

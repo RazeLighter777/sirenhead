@@ -16,6 +16,7 @@
  */
 package me.suesslab.rogueblight.item;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import me.suesslab.rogueblight.entity.Entity;
 
@@ -38,8 +39,12 @@ public final class Inventory {
         this.parent = parent;
     }
 
-    public Inventory(Entity parent, JsonObject json) {
+    public Inventory(Entity parent, JsonArray json) {
 
+    }
+
+    public final void update() {
+        items.forEach(item -> item.body.update());
     }
     public int getItemCount() {
         return items.size();
@@ -111,5 +116,5 @@ public final class Inventory {
         i.registerParent(this);
         items.add(i);
     }
-    
+
 }

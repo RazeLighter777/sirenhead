@@ -33,9 +33,12 @@ public abstract class ItemType {
     private UUID id;
     protected JsonObject config;
 
-    protected ItemType(String name, JsonObject config) {
+    protected ItemType(String name) {
         this.name = name;
         this.id = UUID.nameUUIDFromBytes(name.getBytes());
+    }
+
+    public final void setConfig(JsonObject config) {
         this.config = config;
     }
     

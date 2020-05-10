@@ -17,6 +17,7 @@
 package me.suesslab.rogueblight.interact;
 
 import me.suesslab.rogueblight.entity.Entity;
+import me.suesslab.rogueblight.item.Item;
 
 /**
  *

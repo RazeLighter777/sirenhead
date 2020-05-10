@@ -36,9 +36,13 @@ public abstract class EntityInstance {
         instance = t;
     }
 
-    protected Entity getEntity() {
+    protected final Entity getEntity() {
         return instance;
     }
+
+    //Updates
+    public abstract void update();
+
     //Interactions
     
     public abstract void touch(Interaction action, String message);

@@ -31,9 +31,12 @@ public abstract class EntityType {
     private UUID id;
     protected JsonObject config;
     
-    protected EntityType(String name, JsonObject config) {
+    protected EntityType(String name) {
         this.name = name;
         this.id = UUID.nameUUIDFromBytes(name.getBytes());
+    }
+
+    public final void setConfig(JsonObject config) {
         this.config = config;
     }
     

@@ -63,9 +63,11 @@ public final class Item {
         return getData().get("name").getAsString();
     }
 
-    public void registerParent(Inventory inventory) {
+    public final void registerParent(Inventory inventory) {
         this.parent = inventory;
     }
 
-    
+    public final void update() {
+        body.update();
+    }
 }

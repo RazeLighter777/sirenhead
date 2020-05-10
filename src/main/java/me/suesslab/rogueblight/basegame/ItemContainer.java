@@ -15,8 +15,8 @@ import java.util.UUID;
 
 public class ItemContainer extends EntityType {
 
-    ItemContainer(JsonObject config) {
-        super("itemContainer", config);
+    public ItemContainer() {
+        super("itemContainer");
     }
 
     protected EntityInstance getBody(Entity t) {
@@ -25,10 +25,11 @@ public class ItemContainer extends EntityType {
 
     @Override
     public Entity create(JsonObject input, UUID uuid, IWorld world) {
-        return new Entity(this, uuid,world );
+        return new Entity(this, uuid,world, input );
     }
 
     public Entity create(Inventory i, UUID itemId, IWorld world, UUID uuid) {
+        JsonObject defaultJson = new JsonObject();
         Entity result = create(null, uuid, world);
         Optional<Item> op = i.getItemByUUID(itemId);
         if (op.isPresent()) {
@@ -48,6 +49,11 @@ public class ItemContainer extends EntityType {
         public ItemContainerBehavior(Entity t) {
             super(t);
             i = new Inventory(t);
+        }
+
+        @Override
+        public void update() {
+
         }
 
         @Override

@@ -38,6 +38,9 @@ public abstract class ItemInstance {
     protected Item getEntity() {
         return instance;
     }
+
+    public abstract void update();
+
     //Interactions
     
     public abstract void touch(Interaction action, String message);

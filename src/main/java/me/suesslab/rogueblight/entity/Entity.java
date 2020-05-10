@@ -16,7 +16,9 @@
  */
 package me.suesslab.rogueblight.entity;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.world.IWorld;
 
 import java.util.UUID;
@@ -34,12 +36,23 @@ public final class Entity {
     public EntityInstance body;
     
     private IWorld world;
-    
-    public Entity(EntityType type, UUID uuid, IWorld worldInterface) {
+
+    private Position position;
+
+
+    public Entity(EntityType type, UUID uuid, IWorld worldInterface, JsonObject input) {
+        //load the data variable.
+        data = input;
+        //Instantiate the position
+        position = new Position(0, 0);
+        JsonArray position = data.getAsJsonArray("position");
+        getPos().setJSON(data.getAsJsonArray("position"));
+        //Set the entity data
         this.type = type;
-        body = type.getBody(this);
         this.uuid = uuid;
         this.world = worldInterface;
+        //Instantiate the entity instance
+        body = type.getBody(this);
     }
     
     private EntityType type;
@@ -55,13 +68,34 @@ public final class Entity {
     public final UUID getUUID() {
         return uuid;
     }
-    
+
+    public final Position getPos() {
+        return position;
+    }
+
     public final String getQualifiedName() {
         return getData().get("name").getAsString();
     }
 
     public final IWorld getWorld() {
         return world;
+    }
+
+    public final void update() {
+        if (body.getInventoryComponent().isPresent()) {
+            body.getInventoryComponent().get().update();
+        }
+        body.update();
+    }
+
+    public final void save() {
+        //Saves the position of the entity.
+        data.add("position", position.getJSON());
+        //Saves the type of the entity
+        data.addProperty("type", getType().getName());
+        //Saves the uuid of the entity
+        data.addProperty("uuid", getUUID().toString());
+        //Call for the individual instance to save its properties.
     }
     
 }
