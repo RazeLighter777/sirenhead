@@ -6,11 +6,13 @@ import junit.framework.TestCase;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityType;
 import me.suesslab.rogueblight.world.IWorld;
+import org.junit.Test;
 
 import java.util.UUID;
 
 public class ItemContainerTest extends TestCase {
-    public static void main(String[] args) {
+    @Test
+    public static void test() {
         EntityType containerType = new ItemContainer();
         JsonParser parser = new JsonParser();
         JsonObject data;
