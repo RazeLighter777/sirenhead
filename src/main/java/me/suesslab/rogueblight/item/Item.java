@@ -46,7 +46,10 @@ public final class Item {
     }
     
     private ItemType type;
-    
+
+    public final Inventory getParent() {
+        return parent;
+    }
     public final ItemType getType() {
         return type;
     }
@@ -63,11 +66,15 @@ public final class Item {
         return getData().get("name").getAsString();
     }
 
-    public final void registerParent(Inventory inventory) {
+    public final void setParent(Inventory inventory) {
         this.parent = inventory;
     }
 
     public final void update() {
         body.update();
+    }
+
+    public final void save() {
+
     }
 }

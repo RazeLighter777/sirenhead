@@ -1,5 +1,6 @@
 package me.suesslab.rogueblight.basegame;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityType;
@@ -29,11 +30,13 @@ public class ItemContainer extends EntityType {
         return new Entity(this ,world, input );
     }
 
+
     public Entity create(Inventory i, UUID itemId, IWorld world, UUID uuid, Position pos) {
         JsonObject defaultJson = new JsonObject();
         defaultJson.addProperty("name", i.getItemByUUID(uuid).get().getQualifiedName());
         defaultJson.addProperty("uuid", itemId.toString());
         defaultJson.add("position", pos.getJSON());
+        defaultJson.add("inventory", new JsonArray());
         Entity result = null;
         Optional<Item> op = i.getItemByUUID(itemId);
         if (op.isPresent()) {
@@ -53,11 +56,16 @@ public class ItemContainer extends EntityType {
 
         public ItemContainerBehavior(Entity t) {
             super(t);
-            i = new Inventory(t);
+            i = new Inventory(t, t.getData().get("inventory").getAsJsonArray());
         }
 
         @Override
         public void update() {
+
+        }
+
+        @Override
+        public void save() {
 
         }
 

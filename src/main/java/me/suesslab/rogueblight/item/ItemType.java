@@ -56,7 +56,7 @@ public abstract class ItemType {
     
     protected abstract ItemInstance getBody(Item t);
     
-    public abstract Item create(JsonObject input, UUID uuid, IWorld world);
+    public abstract Item create(JsonObject input, Inventory i);
     
-    
+    public abstract void save();
 }

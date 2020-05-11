@@ -43,6 +43,10 @@ public abstract class EntityInstance {
     //Updates
     public abstract void update();
 
+    //Saves data
+    public void save() {
+    }
+
     //Interactions
     
     public abstract void touch(Interaction action, String message);

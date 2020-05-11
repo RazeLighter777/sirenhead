@@ -20,6 +20,7 @@ public class ItemContainerTest extends TestCase {
                 "\"position\" : [0, 0],\n" +
                 "\"uuid\" : \"123e4567-e89b-12d3-a456-556642440000\",\n" +
                 "\"type\" : \"itemContainer\",\n" +
+                "\"inventory\" : []," +
                 "\"name\" : \"Test Container\"\n" +
                 "}\n").getAsJsonObject();
         Entity container = containerType.create(data, new IWorld() {

@@ -97,7 +97,12 @@ public final class Entity {
         data.addProperty("type", getType().getName());
         //Saves the uuid of the entity
         data.addProperty("uuid", getUUID().toString());
+        //Saves the inventory if the entity has one.
+        if (body.getInventoryComponent().isPresent()) {
+            getData().add("inventory", body.getInventoryComponent().get().getJson());
+        }
         //Call for the individual instance to save its properties.
+        body.save();
     }
     
 }

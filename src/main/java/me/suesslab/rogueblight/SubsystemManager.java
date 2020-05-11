@@ -19,6 +19,8 @@ package me.suesslab.rogueblight;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
+
+import me.suesslab.rogueblight.lib.Registry;
 import me.suesslab.rogueblight.lib.Subsystem;
 import me.suesslab.rogueblight.uix.Display;
 
@@ -38,10 +40,9 @@ public class SubsystemManager {
         }
         return mInstance;
     }
-    List<Subsystem> subs = Arrays.asList(new Subsystem[]{
-        new Display()
-    }
-    );
+    List<Subsystem> subs = Arrays.asList(
+            new Display(),
+            new Registry());
 
     public SubsystemManager() {
         LOGGER.info("Initializing subsystem manager");
@@ -59,7 +60,6 @@ public class SubsystemManager {
     
     public boolean requestShutdown() {
         LOGGER.info("Shutdown requested");
-        shutdown();
         return false;
     }
 
@@ -68,4 +68,7 @@ public class SubsystemManager {
         return ".";
     }
 
+    public String getTypeConfigFileName() {
+        return "types.json";
+    }
 }
