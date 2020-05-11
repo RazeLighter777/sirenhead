@@ -41,6 +41,8 @@ public abstract class ItemInstance {
 
     public abstract void update();
 
+    protected abstract String getQualifiedName();
+
     //Interactions
     
     public abstract void touch(Interaction action, String message);
@@ -51,5 +53,9 @@ public abstract class ItemInstance {
     
     public abstract double queryMass();
 
-    
+
+    //Save json
+    protected void save() {
+
+    }
 }

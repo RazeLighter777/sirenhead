@@ -1,7 +1,8 @@
-package me.suesslab.rogueblight.basegame;
+package me.suesslab.rogueblight.item;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import me.suesslab.rogueblight.basegame.Stone;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityType;
 import me.suesslab.rogueblight.entity.EntityInstance;
@@ -9,6 +10,7 @@ import me.suesslab.rogueblight.entity.ILivingComponent;
 import me.suesslab.rogueblight.interact.Interaction;
 import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.Item;
+import me.suesslab.rogueblight.item.ItemType;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.world.IWorld;
 
@@ -30,11 +32,16 @@ public class ItemContainer extends EntityType {
         return new Entity(this ,world, input );
     }
 
+    @Override
+    public Entity create(IWorld world, Position pos) {
+        return create(new Stone(), world, pos);
+    }
 
-    public Entity create(Inventory i, UUID itemId, IWorld world, UUID uuid, Position pos) {
+
+    public Entity create(Inventory i, UUID itemId, IWorld world, Position pos) {
         JsonObject defaultJson = new JsonObject();
-        defaultJson.addProperty("name", i.getItemByUUID(uuid).get().getQualifiedName());
-        defaultJson.addProperty("uuid", itemId.toString());
+        defaultJson.addProperty("name", i.getItemByUUID(itemId).get().getQualifiedName());
+        defaultJson.addProperty("uuid", UUID.randomUUID().toString());
         defaultJson.add("position", pos.getJSON());
         defaultJson.add("inventory", new JsonArray());
         Entity result = null;
@@ -50,6 +57,16 @@ public class ItemContainer extends EntityType {
     }
 
 
+    public Entity create(ItemType type, IWorld world, Position pos) {
+        JsonObject defaultJson = new JsonObject();
+        defaultJson.addProperty("uuid", UUID.randomUUID().toString());
+        defaultJson.add("position", pos.getJSON());
+        defaultJson.add("inventory", new JsonArray());
+        Entity result = new Entity(this, world, defaultJson);
+        type.create(result.body.getInventoryComponent().get());
+        return result;
+    }
+
     public static class ItemContainerBehavior extends EntityInstance {
 
         private Inventory i;
@@ -57,6 +74,11 @@ public class ItemContainer extends EntityType {
         public ItemContainerBehavior(Entity t) {
             super(t);
             i = new Inventory(t, t.getData().get("inventory").getAsJsonArray());
+        }
+
+        @Override
+        protected String getQualifiedName() {
+            return i.getItemByUUID(i.getItemUUIDs().get(0)).get().getQualifiedName();
         }
 
         @Override

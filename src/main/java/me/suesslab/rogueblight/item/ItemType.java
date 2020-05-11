@@ -55,8 +55,19 @@ public abstract class ItemType {
     }
     
     protected abstract ItemInstance getBody(Item t);
-    
+
+    /**
+     * Creation of item with existing data.
+     * @param input
+     * @param i
+     * @return
+     */
     public abstract Item create(JsonObject input, Inventory i);
-    
-    public abstract void save();
+
+    /**
+     * Generic creation with no existing data.
+     * @param i
+     * @return
+     */
+    public abstract Item create(Inventory i);
 }

@@ -39,10 +39,12 @@ public final class Item {
     private Inventory parent;
 
     public Item(ItemType type, UUID uuid, Inventory parent) {
+        data = new JsonObject();
         this.type = type;
         body = type.getBody(this);
         this.uuid = uuid;
         this.parent = parent;
+        parent.addItem(this);
     }
     
     private ItemType type;
@@ -57,13 +59,13 @@ public final class Item {
     public final JsonObject getData() {
         return data;
     }
-    
+
     public final UUID getUUID() {
         return uuid;
     }
     
     public final String getQualifiedName() {
-        return getData().get("name").getAsString();
+        return body.getQualifiedName();
     }
 
     public final void setParent(Inventory inventory) {
@@ -76,5 +78,13 @@ public final class Item {
 
     public final void save() {
 
+        //Saves the type of the entity
+        data.addProperty("type", getType().getName());
+        //Saves the uuid of the entity
+        data.addProperty("uuid", getUUID().toString());
+        //Save the qualified name of the stone.
+        data.addProperty("name", body.getQualifiedName());
+        //Saves other instance data.
+        body.save();
     }
 }

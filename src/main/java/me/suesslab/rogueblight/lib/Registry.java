@@ -4,14 +4,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.suesslab.rogueblight.SubsystemManager;
+import me.suesslab.rogueblight.item.ItemContainer;
+import me.suesslab.rogueblight.basegame.Stone;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityType;
 import me.suesslab.rogueblight.item.Inventory;
-import me.suesslab.rogueblight.item.Item;
 import me.suesslab.rogueblight.item.ItemType;
 import me.suesslab.rogueblight.world.IWorld;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
@@ -22,6 +22,11 @@ public final class Registry implements Subsystem {
     private ArrayList<ItemType> itemTypes;
     private SubsystemManager manager;
     private JsonObject allRegistryConfigs;
+
+    public Registry() {
+        entityTypes = new ArrayList<>();
+        itemTypes = new ArrayList<>();
+    }
 
     public void registerEntityType(EntityType type) {
         entityTypes.add(type);
@@ -36,11 +41,15 @@ public final class Registry implements Subsystem {
         this.manager = manager;
         try {
             JsonParser parser = new JsonParser();
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(manager.getDataPath() + "/" + manager.getTypeConfigFileName()));
-            allRegistryConfigs = parser.parse(bufferedReader).getAsJsonObject();
+            System.out.println(manager.getDataPath() + "/" + manager.getTypeConfigFileName());
+            FileReader reader = new FileReader(manager.getDataPath() + "/" + manager.getTypeConfigFileName());
+            allRegistryConfigs = parser.parse(reader).getAsJsonObject();
         } catch (FileNotFoundException e) {
             manager.getLogger().severe("Could not open types.json at path " + manager.getDataPath());
         }
+        //TODO: Find better way to register entities.
+        registerEntityType(new ItemContainer());
+        registerItemType(new Stone());
     }
 
     @Override
@@ -92,12 +101,21 @@ public final class Registry implements Subsystem {
         Optional<ItemType> type = attemptToFindItemType(config.get("type").getAsString());
 
         if (type.isPresent()) {
-            Item temp = type.get().create(config, inv);
-            return inv.addOwnedItem(temp);
+            type.get().create(config, inv);
         }
         manager.getLogger().warning("");
         manager.getLogger().warning("Unable to find matching type " + config.get("type").getAsString());
         return false;
+    }
+
+    public void addPlugin(IPlugin plugin) {
+        plugin.getEntityTypes().forEach(this::registerEntityType);
+        plugin.getItemTypes().forEach(this::registerItemType);
+    }
+
+    public void resetRegistry() {
+        itemTypes.clear();
+        entityTypes.clear();
     }
 
     private Optional<EntityType> attemptToFindEntityType(String typeName) {

@@ -36,6 +36,8 @@ public abstract class EntityInstance {
         instance = t;
     }
 
+    protected abstract String getQualifiedName();
+
     protected final Entity getEntity() {
         return instance;
     }
@@ -44,7 +46,7 @@ public abstract class EntityInstance {
     public abstract void update();
 
     //Saves data
-    public void save() {
+    protected void save() {
     }
 
     //Interactions

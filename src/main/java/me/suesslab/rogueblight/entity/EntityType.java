@@ -17,6 +17,7 @@
 package me.suesslab.rogueblight.entity;
 
 import com.google.gson.JsonObject;
+import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.world.IWorld;
 
 import java.util.UUID;
@@ -53,8 +54,20 @@ public abstract class EntityType {
     }
     
     protected abstract EntityInstance getBody(Entity t);
-    
+
+    /**
+     * Creation of item with existing data
+     * @param input
+     * @param world
+     * @return
+     */
     public abstract Entity create(JsonObject input, IWorld world);
-    
+
+    /**
+     * Creation of entity without existing data.
+     * @param world
+     * @return
+     */
+    public abstract Entity create(IWorld world, Position pos);
     
 }

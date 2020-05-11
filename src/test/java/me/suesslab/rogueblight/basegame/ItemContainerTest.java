@@ -1,34 +1,30 @@
 package me.suesslab.rogueblight.basegame;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import junit.framework.TestCase;
-import me.suesslab.rogueblight.entity.Entity;
-import me.suesslab.rogueblight.entity.EntityType;
-import me.suesslab.rogueblight.world.IWorld;
+import me.suesslab.rogueblight.SubsystemManager;
+import me.suesslab.rogueblight.item.ItemContainer;
+import me.suesslab.rogueblight.lib.LevelManager;
+import me.suesslab.rogueblight.lib.Position;
+import me.suesslab.rogueblight.lib.Registry;
+import me.suesslab.rogueblight.world.World;
 import org.junit.Test;
 
-import java.util.UUID;
+import java.util.Arrays;
 
 public class ItemContainerTest extends TestCase {
     @Test
     public static void test() {
-        EntityType containerType = new ItemContainer();
-        JsonParser parser = new JsonParser();
-        JsonObject data;
-        data = parser.parse("{\n" +
-                "\"position\" : [0, 0],\n" +
-                "\"uuid\" : \"123e4567-e89b-12d3-a456-556642440000\",\n" +
-                "\"type\" : \"itemContainer\",\n" +
-                "\"inventory\" : []," +
-                "\"name\" : \"Test Container\"\n" +
-                "}\n").getAsJsonObject();
-        Entity container = containerType.create(data, new IWorld() {
-            @Override
-            public int hashCode() {
-                return super.hashCode();
-            }
-        });
-        System.out.println(container.getQualifiedName());
+        Registry registry = new Registry();
+        registry.addPlugin(new BaseGamePlugin());
+        LevelManager lvm = new LevelManager(registry);
+        World world = new World(lvm, new JsonObject());
+        //SubsystemManager partialManager = new SubsystemManager(Arrays.asList(registry, lvm));
+        ItemContainer itemContainer = new ItemContainer();
+        Stone stone = new Stone();
+        world.createEntityInWorld(itemContainer.create(stone, world, new Position(0,0)));
+
+        world.save();
+        world.save();
+        world.save();
     }
 }

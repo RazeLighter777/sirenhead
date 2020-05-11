@@ -36,22 +36,22 @@ public class SubsystemManager {
 
     public static SubsystemManager getInstance() {
         if (mInstance == null) {
-            mInstance = new SubsystemManager();
+            mInstance = new SubsystemManager(Arrays.asList(new Display(), new Registry()));
         }
         return mInstance;
     }
-    List<Subsystem> subs = Arrays.asList(
-            new Display(),
-            new Registry());
 
-    public SubsystemManager() {
+    List<Subsystem> subs;
+
+    public SubsystemManager(List<Subsystem> subs) {
+        this.subs = subs;
         LOGGER.info("Initializing subsystem manager");
-        subs.forEach(system -> {system.init(this);});
+        subs.forEach(system -> system.init(this));
     }
     
     private void shutdown() {
         LOGGER.info("Shutting down subsystems");
-        subs.forEach(system -> {system.stop();});
+        subs.forEach(Subsystem::stop);
     }
     
     public Logger getLogger() {
@@ -65,7 +65,7 @@ public class SubsystemManager {
 
     //Returns the path to the directory the program is operating in.
     public String getDataPath() {
-        return ".";
+        return System.getProperty("user.dir") + "/game";
     }
 
     public String getTypeConfigFileName() {

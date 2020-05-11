@@ -42,4 +42,11 @@ public final class Position {
         setX(a.get(0).getAsInt());
         setY(a.get(1).getAsInt());
     }
+
+    public boolean equals(Position other) {
+        if ((other.getX() == getX()) && (other.getY() == getY())) {
+            return true;
+        }
+        return false;
+    }
 }

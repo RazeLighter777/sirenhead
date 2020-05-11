@@ -17,6 +17,8 @@
 package me.suesslab.rogueblight.item;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import me.suesslab.rogueblight.entity.Entity;
 
 import java.util.ArrayList;
@@ -32,14 +34,17 @@ public final class Inventory {
 
 
     private Entity parent;
-    private ArrayList<Item> items;
+    private ArrayList<Item> items = new ArrayList<>();
 
     public Inventory(Entity parent) {
         this.parent = parent;
+
     }
 
     public Inventory(Entity parent, JsonArray json) {
-
+        for (JsonElement itemData : json) {
+            parent.getWorld().loadItemIntoInventory(itemData.getAsJsonObject(), this);
+        }
     }
 
     public final void update() {
@@ -111,27 +116,15 @@ public final class Inventory {
         return false;
     }
 
-    /**
-     * Adds an item if its parent is already set to this inventory. This is only useful for newly created items.
-     * @param i
-     * @return
-     */
-    public boolean addOwnedItem(Item i) {
-        if (i.getParent() == this) {
-            addItem(i);
-            return true;
-        }
-        return false;
-    }
 
-    private void addItem(Item i) {
+    protected void addItem(Item i) {
         i.setParent(this);
         items.add(i);
     }
 
     public JsonArray getJson() {
         JsonArray array = new JsonArray();
-        items.forEach(item -> item.save());
+        items.forEach(Item::save);
         items.forEach(item -> array.add(item.getData()));
         return array;
     }
