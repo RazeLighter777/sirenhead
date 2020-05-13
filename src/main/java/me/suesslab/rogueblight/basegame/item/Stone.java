@@ -1,4 +1,4 @@
-package me.suesslab.rogueblight.basegame;
+package me.suesslab.rogueblight.basegame.item;
 
 import com.google.gson.JsonObject;
 import me.suesslab.rogueblight.interact.Interaction;

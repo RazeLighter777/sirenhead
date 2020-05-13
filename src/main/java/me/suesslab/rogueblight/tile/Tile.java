@@ -20,6 +20,8 @@ import com.google.gson.JsonObject;
 import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.ItemInstance;
 import me.suesslab.rogueblight.item.ItemType;
+import me.suesslab.rogueblight.lib.Position;
+import me.suesslab.rogueblight.world.IWorld;
 
 import java.util.UUID;
 
@@ -28,5 +30,42 @@ import java.util.UUID;
  * @author justin
  */
 public final class Tile {
+
+    private TileType type;
+    private IWorld world;
+    private Position pos;
+    public TileInstance body;
+
+    public IWorld getWorld() {
+        return world;
+    }
+
+    public JsonObject getData() {
+        return data;
+    }
+
+    protected JsonObject data;
+
+
+
+    public Tile(TileType type, IWorld world, JsonObject data, Position pos) {
+        this.type = type;
+        this.world = world;
+        this.pos = pos;
+        this.data = data;
+        body = type.getBody(this);
+    }
+
+    public final void save() {
+        data.addProperty("type", getType().getName());
+        body.save();
+    }
+
+    public final Position getPos() {
+        return pos;
+    }
+    public final TileType getType() {
+        return type;
+    }
 
 }

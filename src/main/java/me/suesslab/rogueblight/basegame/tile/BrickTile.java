@@ -1,0 +1,41 @@
+package me.suesslab.rogueblight.basegame.tile;
+
+import com.google.gson.JsonObject;
+import me.suesslab.rogueblight.lib.Position;
+import me.suesslab.rogueblight.tile.Tile;
+import me.suesslab.rogueblight.tile.TileInstance;
+import me.suesslab.rogueblight.tile.TileType;
+import me.suesslab.rogueblight.world.IWorld;
+
+public class BrickTile extends TileType {
+
+
+    @Override
+    protected TileInstance getBody(Tile t) {
+        return new BrickTileInstance(t);
+    }
+
+    @Override
+    public Tile create(JsonObject input, IWorld world, Position pos) {
+        return new Tile(this, world, input, pos);
+    }
+
+    @Override
+    public Tile create(IWorld world, Position pos) {
+        return new Tile(this, world, new JsonObject(), pos);
+    }
+
+    @Override
+    public String getName() {
+        return "brickTile";
+    }
+
+    public static class BrickTileInstance extends TileInstance {
+
+        public BrickTileInstance(Tile tile) {
+            super(tile);
+        }
+
+    }
+
+}

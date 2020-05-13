@@ -11,6 +11,11 @@ public final class Position {
         this.setY(y);
     }
 
+    public Position(JsonArray a) {
+        this(0,0);
+        setJSON(a);
+    }
+
     public int getX() {
         return x;
     }

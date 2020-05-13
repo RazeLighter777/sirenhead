@@ -20,6 +20,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.suesslab.rogueblight.entity.Entity;
+import me.suesslab.rogueblight.world.IWorld;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +43,8 @@ public final class Inventory {
     }
 
     public Inventory(Entity parent, JsonArray json) {
+        this(parent);
+        IWorld temp = parent.getWorld();
         for (JsonElement itemData : json) {
             parent.getWorld().loadItemIntoInventory(itemData.getAsJsonObject(), this);
         }

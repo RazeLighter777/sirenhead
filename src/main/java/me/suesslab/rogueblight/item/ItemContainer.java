@@ -2,15 +2,12 @@ package me.suesslab.rogueblight.item;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import me.suesslab.rogueblight.basegame.Stone;
+import me.suesslab.rogueblight.basegame.item.Stone;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityType;
 import me.suesslab.rogueblight.entity.EntityInstance;
 import me.suesslab.rogueblight.entity.ILivingComponent;
 import me.suesslab.rogueblight.interact.Interaction;
-import me.suesslab.rogueblight.item.Inventory;
-import me.suesslab.rogueblight.item.Item;
-import me.suesslab.rogueblight.item.ItemType;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.world.IWorld;
 

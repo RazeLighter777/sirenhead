@@ -1,9 +1,14 @@
 package me.suesslab.rogueblight.basegame;
 
+import me.suesslab.rogueblight.basegame.item.Stone;
+import me.suesslab.rogueblight.basegame.map.FlatBrickMapType;
+import me.suesslab.rogueblight.basegame.tile.BrickTile;
 import me.suesslab.rogueblight.entity.EntityType;
 import me.suesslab.rogueblight.item.ItemContainer;
 import me.suesslab.rogueblight.item.ItemType;
 import me.suesslab.rogueblight.lib.IPlugin;
+import me.suesslab.rogueblight.tile.TileMapType;
+import me.suesslab.rogueblight.tile.TileType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,4 +34,15 @@ public class BaseGamePlugin implements IPlugin {
     public List<ItemType> getItemTypes() {
         return Arrays.asList(new Stone());
     }
+
+    @Override
+    public List<TileType> getTileTypes() {
+        return Arrays.asList(new BrickTile());
+    }
+
+    public List<TileMapType> getTileMapTypes() {
+        return Arrays.asList(new FlatBrickMapType("flatBrickMap"));
+    }
+
+
 }
