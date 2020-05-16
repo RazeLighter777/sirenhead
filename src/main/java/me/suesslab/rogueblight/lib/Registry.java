@@ -8,18 +8,15 @@ import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityType;
 import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.ItemType;
-import me.suesslab.rogueblight.tile.Tile;
-import me.suesslab.rogueblight.tile.TileMap;
 import me.suesslab.rogueblight.tile.TileMapType;
 import me.suesslab.rogueblight.tile.TileType;
 import me.suesslab.rogueblight.world.IWorld;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public final class Registry implements Subsystem {
+public final class Registry implements ISubsystem {
 
     private ArrayList<EntityType> entityTypes;
     private ArrayList<ItemType> itemTypes;
@@ -143,8 +140,8 @@ public final class Registry implements Subsystem {
 
         if (type.isPresent()) {
             type.get().create(config, inv);
+            return true;
         }
-        manager.getLogger().warning("");
         manager.getLogger().warning("Unable to find matching type " + config.get("type").getAsString());
         return false;
     }

@@ -24,20 +24,16 @@ import me.suesslab.rogueblight.entity.Entity;
  * @author justin
  */
 public abstract class EntityInteraction extends Interaction {
-    
+
+    public Entity getTarget() {
+        return target;
+    }
+
     protected Entity target;
     
-    public EntityInteraction(long time, Entity target) {
-        super(time);
+    public EntityInteraction(Entity target) {
         this.target = target;
     }
-    
-    @Override
-    public void interact() {
-       run(target);
-    }
-    
-    public abstract void run(Entity target);
         
     
 }

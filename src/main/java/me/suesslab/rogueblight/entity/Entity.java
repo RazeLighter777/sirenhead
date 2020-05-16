@@ -68,6 +68,9 @@ public final class Entity {
     }
     
     public final UUID getUUID() {
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+        }
         return uuid;
     }
 
@@ -87,7 +90,7 @@ public final class Entity {
         if (body.getInventoryComponent().isPresent()) {
             body.getInventoryComponent().get().update();
         }
-        body.update();
+        body.getController().update();
     }
 
     public final void save() {

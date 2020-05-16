@@ -14,8 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package me.suesslab.rogueblight.entity;
+package me.suesslab.rogueblight.aspect;
 
+import me.suesslab.rogueblight.entity.Entity;
+import me.suesslab.rogueblight.interact.ThrownTooledInteraction;
 import me.suesslab.rogueblight.interact.TooledInteraction;
 
 /**
@@ -23,7 +25,13 @@ import me.suesslab.rogueblight.interact.TooledInteraction;
  * @author justin
  */
 public interface ILivingComponent {
-    
-    public void hitWithTool(TooledInteraction t, Entity self, double velocity);
+
+    public Emotion getEmotion();
+
+    public Alignment getAlignment();
+
+    public double getHealthRemaining();
+
+
     
 }

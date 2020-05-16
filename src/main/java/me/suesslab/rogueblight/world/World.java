@@ -145,4 +145,9 @@ public class World implements IWorld {
 
     }
 
+    @Override
+    public Optional<Tile> getTileAtPosition(Position pos) {
+        return map.getTileAtPosition(pos);
+    }
+
 }

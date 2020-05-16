@@ -25,19 +25,20 @@ import me.suesslab.rogueblight.item.Item;
  */
 public abstract class EntityItemInteraction extends Interaction {
 
+    public Entity getOrigin() {
+        return origin;
+    }
+
     protected Entity origin;
+
+    public Item getTarget() {
+        return target;
+    }
+
     protected Item target;
 
-    public EntityItemInteraction(long time, Entity origin, Item target) {
-        super(time);
+    public EntityItemInteraction(Entity origin, Item target) {
         this.target = target;
     }
-
-    @Override
-    public void interact() {
-        run(origin, target);
-    }
-
-    public abstract void run(Entity origin, Item target);
 
 }

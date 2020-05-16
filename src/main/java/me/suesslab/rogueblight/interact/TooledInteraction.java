@@ -27,15 +27,10 @@ public abstract class TooledInteraction extends EntityEntityInteraction {
     
     private final Item tool;
     
-    public TooledInteraction(long time, Entity origin, Entity target, Item tool) {
-        super(time, origin, target);
+    public TooledInteraction(Entity origin, Entity target, Item tool) {
+        super(origin, target);
         this.tool = tool;
     }
-    @Override
-    public final void interact() {
-        run(origin, target, tool);
-    }
-    public abstract void run(Entity origin, Entity target, Item tool);
     
     public final Item getTool() {
         return tool;

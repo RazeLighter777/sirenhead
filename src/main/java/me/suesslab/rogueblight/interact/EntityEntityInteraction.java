@@ -27,18 +27,11 @@ public abstract class EntityEntityInteraction extends EntityInteraction {
 
     protected final Entity origin;
     
-    protected EntityEntityInteraction(long time, Entity origin, Entity target) {
-        super(time, origin);
+    protected EntityEntityInteraction(Entity origin, Entity target) {
+        super(origin);
         this.origin = origin;
         this.target = target;
     }
-    
-    @Override
-    public void interact() {
-       run(origin, target);
-    }
-    
-    public abstract void run(Entity origin, Entity target);
     
     public final Entity getOrigin() {
         return origin;

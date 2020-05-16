@@ -2,18 +2,18 @@ package me.suesslab.rogueblight.lib;
 
 import com.google.gson.JsonObject;
 import me.suesslab.rogueblight.SubsystemManager;
+import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityType;
 import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.ItemType;
 import me.suesslab.rogueblight.tile.Tile;
-import me.suesslab.rogueblight.tile.TileMap;
 import me.suesslab.rogueblight.tile.TileMapType;
 import me.suesslab.rogueblight.tile.TileType;
 import me.suesslab.rogueblight.world.World;
 
 import java.util.Optional;
 
-public class LevelManager implements Subsystem {
+public class LevelManager implements ISubsystem {
 
     private SubsystemManager manager;
     private Registry registry;
@@ -52,7 +52,11 @@ public class LevelManager implements Subsystem {
     }
 
     public void loadEntityIntoWorld(JsonObject input) {
-        registry.loadEntityInWorld(input, world);
+        Optional<Entity> entity = registry.loadEntityInWorld(input, world);
+        if (entity.isPresent()) {
+            world.createEntityInWorld(entity.get());
+        }
+
     }
 
     public void createEntityAtPosition(String typeName, Position pos) {

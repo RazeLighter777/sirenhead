@@ -23,6 +23,7 @@ public class WorldCreationTest extends TestCase {
         Stone stone = new Stone();
         ItemContainer itemContainer = new ItemContainer();
         world.createEntityInWorld(itemContainer.create(stone, world, new Position(0,0)));
+        world.getTileAtPosition(new Position(0,0));
         world.save();
         System.out.println(world.getWorldData().toString());
     }

@@ -6,6 +6,7 @@ import me.suesslab.rogueblight.interact.Interaction;
 import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.ItemType;
 import me.suesslab.rogueblight.lib.Position;
+import me.suesslab.rogueblight.tile.Tile;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,4 +30,6 @@ public interface IWorld {
     public abstract List<Entity> getEntitiesAtPosition(Position pos);
 
     public abstract void registerInteraction(Interaction action);
+
+    public abstract Optional<Tile> getTileAtPosition(Position pos);
 }

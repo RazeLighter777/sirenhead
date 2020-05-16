@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import me.suesslab.rogueblight.lib.Registry;
-import me.suesslab.rogueblight.lib.Subsystem;
+import me.suesslab.rogueblight.lib.ISubsystem;
 import me.suesslab.rogueblight.uix.Display;
 
 /**
@@ -41,9 +41,9 @@ public class SubsystemManager {
         return mInstance;
     }
 
-    List<Subsystem> subs;
+    List<ISubsystem> subs;
 
-    public SubsystemManager(List<Subsystem> subs) {
+    public SubsystemManager(List<ISubsystem> subs) {
         this.subs = subs;
         LOGGER.info("Initializing subsystem manager");
         subs.forEach(system -> system.init(this));
@@ -51,7 +51,7 @@ public class SubsystemManager {
     
     private void shutdown() {
         LOGGER.info("Shutting down subsystems");
-        subs.forEach(Subsystem::stop);
+        subs.forEach(ISubsystem::stop);
     }
     
     public Logger getLogger() {

@@ -16,12 +16,7 @@
  */
 package me.suesslab.rogueblight.item;
 
-import me.suesslab.rogueblight.entity.Entity;
-import me.suesslab.rogueblight.entity.ILivingComponent;
 import me.suesslab.rogueblight.interact.Interaction;
-
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  **

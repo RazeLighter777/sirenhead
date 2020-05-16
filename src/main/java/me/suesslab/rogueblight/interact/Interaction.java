@@ -24,19 +24,9 @@ import me.suesslab.rogueblight.entity.Entity;
  * @author justin
  */
 public abstract class Interaction {
-    
-    private final long time;
-    protected Interaction(long time) {
-        this.time = time;
-    }
-    
-    public final long getTime() {
-        return time;
-    }
-    
-    public abstract void interact();
-    
+    /**
+     *
+     * @return A full sentence describing the interaction. No period and capitalize first letter of the sentence.
+     */
     public abstract String toString();
-    
-    
 }

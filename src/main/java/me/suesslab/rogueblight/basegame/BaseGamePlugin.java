@@ -17,7 +17,7 @@ public class BaseGamePlugin implements IPlugin {
 
     @Override
     public String getPluginName() {
-        return null;
+        return "basePlugin";
     }
 
     @Override

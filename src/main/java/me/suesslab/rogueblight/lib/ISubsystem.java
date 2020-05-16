@@ -24,7 +24,7 @@ import me.suesslab.rogueblight.SubsystemManager;
  *
  * @author justin
  */
-public interface Subsystem {
+public interface ISubsystem {
 
     /**
      * Initializes the subsystem.

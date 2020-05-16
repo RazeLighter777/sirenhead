@@ -19,9 +19,10 @@ package me.suesslab.rogueblight.entity;
 import java.util.Optional;
 import java.util.UUID;
 
-import me.suesslab.rogueblight.interact.EntityEntityInteraction;
+import me.suesslab.rogueblight.aspect.IHumanoidComponent;
+import me.suesslab.rogueblight.aspect.ILivingComponent;
+import me.suesslab.rogueblight.aspect.IPhysicalComponent;
 import me.suesslab.rogueblight.interact.Interaction;
-import me.suesslab.rogueblight.interact.TooledInteraction;
 import me.suesslab.rogueblight.item.Inventory;
 
 /**
@@ -31,9 +32,11 @@ import me.suesslab.rogueblight.item.Inventory;
 public abstract class EntityInstance {
 
     private Entity instance;
+    private EntityController entityController;
 
     public EntityInstance(Entity t) {
         instance = t;
+        entityController = new DefaultEntityController(instance);
     }
 
     protected abstract String getQualifiedName();
@@ -42,22 +45,23 @@ public abstract class EntityInstance {
         return instance;
     }
 
-    //Updates
-    public abstract void update();
+    public final EntityController getController() {
+        return entityController;
+    }
+
+    public final void setEntityController(EntityController entityController) {
+        this.entityController = entityController;
+    }
+
 
     //Saves data
     protected void save() {
     }
-
-    //Interactions
-    
-    public abstract void touch(Interaction action, String message);
     
     
     
     //Queries
-    
-    public abstract double queryMass();
+
 
     public abstract Optional<UUID> getPresentedItem();
 
@@ -66,5 +70,9 @@ public abstract class EntityInstance {
     public abstract Optional<Inventory> getInventoryComponent();
     
     public abstract Optional<ILivingComponent> getLivingComponent();
+
+    public abstract Optional<IHumanoidComponent> getHumanoidComponent();
+
+    public abstract Optional<IPhysicalComponent> getPhysicalComponent();
     
 }
