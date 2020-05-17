@@ -16,9 +16,9 @@ import me.suesslab.rogueblight.world.IWorld;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Player extends EntityType {
+public class Human extends EntityType {
 
-    protected Player(String name) {
+    protected Human(String name) {
         super(name);
     }
 
@@ -37,7 +37,7 @@ public class Player extends EntityType {
         return null;
     }
 
-    public static class PlayerInstance extends EntityInstance {
+    public class PlayerInstance extends EntityInstance {
 
         public PlayerInstance(Entity t) {
             super(t);

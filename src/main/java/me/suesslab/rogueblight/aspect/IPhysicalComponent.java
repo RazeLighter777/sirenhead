@@ -37,4 +37,7 @@ public interface IPhysicalComponent {
     public Interaction activate(EntityInteraction t);
 
     public Interaction useToolOn(TooledInteraction t);
+
+    public Interaction hitWithProjectile(ProjectileTooledInteraction t, double velocity);
+
 }

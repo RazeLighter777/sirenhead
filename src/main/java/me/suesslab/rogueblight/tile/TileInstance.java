@@ -13,4 +13,9 @@ public abstract class TileInstance {
     public void save() {
 
     }
+
+    public abstract double getOpacity();
+
+    public abstract boolean isSolid();
+
 }

@@ -2,6 +2,7 @@ package me.suesslab.rogueblight.lib;
 
 import junit.framework.TestCase;
 import me.suesslab.rogueblight.aspect.HumanoidPose;
+import me.suesslab.rogueblight.literary.EnumResourceWrapper;
 import org.junit.Test;
 
 public class EnumResourceWrapperTest extends TestCase {

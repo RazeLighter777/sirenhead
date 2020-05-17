@@ -37,9 +37,28 @@ public final class Inventory {
     private Entity parent;
     private ArrayList<Item> items = new ArrayList<>();
 
+    public int getMaxItemsCount() {
+        return maxItemsCount;
+    }
+
+    public void setMaxItemsCount(int maxItemsCount) {
+        this.maxItemsCount = maxItemsCount;
+    }
+
+    public double getMaxItemsMass() {
+        return maxItemsMass;
+    }
+
+    public void setMaxItemsMass(double maxItemsMass) {
+        this.maxItemsMass = maxItemsMass;
+    }
+
+    private int maxItemsCount;
+    private double maxItemsMass;
     public Inventory(Entity parent) {
         this.parent = parent;
-
+        maxItemsCount = -1;
+        maxItemsMass = -1d;
     }
 
     public Inventory(Entity parent, JsonArray json) {
@@ -53,10 +72,18 @@ public final class Inventory {
     public final void update() {
         items.forEach(item -> item.body.update());
     }
+
     public int getItemCount() {
         return items.size();
     }
 
+    public double getItemsMass() {
+        double sum = 0.0;
+        for (Item item : items) {
+            sum += item.body.queryMass();
+        }
+        return sum;
+    }
     public ArrayList<String> getItemNames() {
         ArrayList<String> result = new ArrayList<>();
         items.forEach(item -> {
@@ -113,8 +140,13 @@ public final class Inventory {
 
     public static boolean transferItem(Inventory i1, Inventory i2, Item i) {
         if (i1.removeItem(i)) {
-            i2.addItem(i);
-            return true;
+            if ((i2.getItemsMass() + i.body.queryMass() <= i2.getMaxItemsMass()) && (i2.getMaxItemsMass() > 0)) {
+                if ((i2.getItemCount() + 1 <= i2.getMaxItemsCount()) && (i2.getMaxItemsCount() > 0)) {
+                    i2.addItem(i);
+                    return true;
+                }
+            }
+
         }
         return false;
     }

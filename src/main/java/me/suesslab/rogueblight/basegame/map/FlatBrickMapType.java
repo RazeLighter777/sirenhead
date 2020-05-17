@@ -68,8 +68,10 @@ public class FlatBrickMapType extends TileMapType {
 
         @Override
         public Optional<Tile> getTileAtPosition(Position pos) {
-            if (tiles.containsKey(pos)) {
-                return Optional.of(tiles.get(pos));
+            for (Position p : tiles.keySet()) {
+                if (pos.equals(p)) {
+                    return Optional.of(tiles.get(p));
+                }
             }
             Optional<Tile> newTile = world.createTile("brickTile", pos);
             if (newTile.isPresent()) {

@@ -78,6 +78,14 @@ public class Display implements ISubsystem {
                     manager.getLogger().warning("Interrupted exception on frame");
                 }
                 frameProvider.getFrame().ifPresent(Display.this::drawFrame);
+
+                try {
+                    screen.refresh();
+                    screen.doResizeIfNecessary();
+                    terminal.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
         }

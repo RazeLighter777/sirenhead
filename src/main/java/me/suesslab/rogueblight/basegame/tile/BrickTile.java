@@ -36,6 +36,16 @@ public class BrickTile extends TileType {
             super(tile);
         }
 
+        @Override
+        public double getOpacity() {
+            return 0;
+        }
+
+        @Override
+        public boolean isSolid() {
+            return false;
+        }
+
     }
 
 }

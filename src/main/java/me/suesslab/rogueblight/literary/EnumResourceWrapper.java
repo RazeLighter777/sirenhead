@@ -1,4 +1,4 @@
-package me.suesslab.rogueblight.lib;
+package me.suesslab.rogueblight.literary;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
