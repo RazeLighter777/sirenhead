@@ -17,9 +17,12 @@ public class EntityDisplayController extends EntityController implements IFrameP
     private Display display;
     private SubsystemManager manager;
     private List<List<TextCharacter>> currentFrame;
+    private IController controller;
+    private long nextMoveTick = 0;
 
-    public EntityDisplayController(Entity e, Display display) {
+    public EntityDisplayController(Entity e, Display display, IController controller) {
         super(e);
+        this.controller = controller;
         this.display = display;
         currentFrame = new ArrayList<>();
         this.entity = e;
@@ -74,6 +77,35 @@ public class EntityDisplayController extends EntityController implements IFrameP
 
     @Override
     public void update() {
+        if (entity.getWorld().getTick() >= nextMoveTick) {
+            switch (controller.getDirection()) {
+                case S:
+                    entity.getPos().setY(entity.getPos().getY() + 1);
+                    break;
+                case W:
+                    entity.getPos().setX(entity.getPos().getX() - 1);
+                    break;
+                case E:
+                    entity.getPos().setX(entity.getPos().getX() + 1);
+                    break;
+                case N:
+                    entity.getPos().setY(entity.getPos().getY() - 1);
+                case NE:
+                    break;
+                case NW:
+                    break;
+                case SE:
+                    break;
+                case SW:
+                    break;
+                case NONE:
+                default:
+                    break;
+            }
+            if (controller.getDirection() != IController.Direction.NONE) {
+                nextMoveTick = entity.getWorld().getTick() + (entity.body.getLivingComponent().isPresent() ? 100L / (long)entity.body.getLivingComponent().get().getMovementSpeed()  : 1L);
+            }
+        }
 
     }
 }

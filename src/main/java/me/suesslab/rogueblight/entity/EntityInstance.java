@@ -16,9 +16,12 @@
  */
 package me.suesslab.rogueblight.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import me.suesslab.rogueblight.aspect.IComponent;
 import me.suesslab.rogueblight.aspect.IHumanoidComponent;
 import me.suesslab.rogueblight.aspect.ILivingComponent;
 import me.suesslab.rogueblight.aspect.IPhysicalComponent;
@@ -39,6 +42,14 @@ public abstract class EntityInstance {
         entityController = new DefaultEntityController(instance);
     }
 
+    /**
+     * DO NOT OVERRIDE UNLESS YOU NEED TO KEEP CHUNKS LOADED. THIS WILL IMPACT PERFORMANCE
+     * @return the number of 16 x 16 chunks to keep loaded.
+     */
+    public int forceLoadedChunksRadius() {
+        return 0;
+    }
+
     protected abstract String getQualifiedName();
 
     protected final Entity getEntity() {
@@ -53,9 +64,24 @@ public abstract class EntityInstance {
         this.entityController = entityController;
     }
 
+    protected final List<IComponent> getComponents() {
+        ArrayList<IComponent> components = new ArrayList<>();
+        if (getHumanoidComponent().isPresent()) {
+            components.add(getHumanoidComponent().get());
+        }
+        if (getLivingComponent().isPresent()) {
+            components.add(getLivingComponent().get());
+        }
+        if (getPhysicalComponent().isPresent()) {
+            components.add(getPhysicalComponent().get());
+        }
+        return components;
+    }
 
     //Saves data
     protected void save() {
+        //Save data of each component.
+        getComponents().forEach(IComponent::save);
     }
     
     

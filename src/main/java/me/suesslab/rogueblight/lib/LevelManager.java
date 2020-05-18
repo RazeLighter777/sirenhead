@@ -12,6 +12,7 @@ import me.suesslab.rogueblight.tile.TileType;
 import me.suesslab.rogueblight.world.World;
 
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class LevelManager implements ISubsystem {
 
@@ -96,6 +97,10 @@ public class LevelManager implements ISubsystem {
 
     public Optional<TileMapType> getTileMapByName(String name) {
         return registry.getMapType(name);
+    }
+
+    public int getTickRate() {
+        return Integer.parseInt(ResourceBundle.getBundle("Game").getString("tickRate"));
     }
     @Override
     public void stop() {

@@ -16,6 +16,7 @@
  */
 package me.suesslab.rogueblight.item;
 
+import me.suesslab.rogueblight.aspect.IComponent;
 import me.suesslab.rogueblight.interact.Interaction;
 
 /**
@@ -51,6 +52,7 @@ public abstract class ItemInstance {
 
     //Save json
     protected void save() {
+        //Saves each component.
 
     }
 }

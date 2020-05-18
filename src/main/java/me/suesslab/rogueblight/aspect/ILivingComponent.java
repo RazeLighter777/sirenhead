@@ -24,7 +24,7 @@ import me.suesslab.rogueblight.interact.TooledInteraction;
  *
  * @author justin
  */
-public interface ILivingComponent {
+public interface ILivingComponent extends IComponent {
 
     public Emotion getEmotion();
 
@@ -32,6 +32,9 @@ public interface ILivingComponent {
 
     public double getHealthRemaining();
 
+    public double getMaxHealth();
+
+    public int getMovementSpeed();
 
     
 }

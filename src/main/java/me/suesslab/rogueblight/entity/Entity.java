@@ -18,9 +18,13 @@ package me.suesslab.rogueblight.entity;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import me.suesslab.rogueblight.aspect.IComponent;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.world.IWorld;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**

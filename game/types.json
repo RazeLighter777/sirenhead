@@ -1,4 +1,5 @@
 {
   "itemContainer" : {},
-  "stone" : {}
+  "stone" : {},
+  "human" : {"defaultHumanName" :  "Steve", "defaultHumanHealth": 100.0}
 }

@@ -17,6 +17,7 @@ import me.suesslab.rogueblight.world.IWorld;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class World implements IWorld {
 
@@ -29,6 +30,13 @@ public class World implements IWorld {
     private JsonObject worldData;
     private HashMap<UUID, Entity> entities;
     private TileMap map;
+
+    @Override
+    public long getTick() {
+        return tick;
+    }
+
+    private long tick;
 
     private void init(LevelManager levelManager) {
         this.levelManager = levelManager;
@@ -148,6 +156,18 @@ public class World implements IWorld {
     @Override
     public Optional<Tile> getTileAtPosition(Position pos) {
         return map.getTileAtPosition(pos);
+    }
+
+    public void update() {
+        try {
+            TimeUnit.MILLISECONDS.sleep((long)(1.0/(double)levelManager.getTickRate() * 1000));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for (Entity e : entities.values()) {
+            e.update();
+        }
+        tick++;
     }
 
 }

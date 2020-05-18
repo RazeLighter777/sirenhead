@@ -3,7 +3,7 @@ package me.suesslab.rogueblight.literary;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class EnumResourceWrapper<T extends Enum<T>> {
+public final class EnumResourceWrapper<T extends Enum<T>> {
     private ResourceBundle bundle;
     private Class<T> clazz;
     public EnumResourceWrapper(Class<T> clazz) {

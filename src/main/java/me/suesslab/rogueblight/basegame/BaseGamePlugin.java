@@ -1,5 +1,6 @@
 package me.suesslab.rogueblight.basegame;
 
+import me.suesslab.rogueblight.basegame.entity.Human;
 import me.suesslab.rogueblight.basegame.item.Stone;
 import me.suesslab.rogueblight.basegame.map.FlatBrickMapType;
 import me.suesslab.rogueblight.basegame.tile.BrickTile;
@@ -27,7 +28,7 @@ public class BaseGamePlugin implements IPlugin {
 
     @Override
     public List<EntityType> getEntityTypes() {
-        return Arrays.asList(new ItemContainer());
+        return Arrays.asList(new ItemContainer(), new Human("human"));
     }
 
     @Override

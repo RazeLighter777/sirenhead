@@ -1,14 +1,11 @@
 package me.suesslab.rogueblight.basegame.entity;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import me.suesslab.rogueblight.aspect.IHumanoidComponent;
-import me.suesslab.rogueblight.aspect.ILivingComponent;
-import me.suesslab.rogueblight.aspect.IPhysicalComponent;
+import me.suesslab.rogueblight.aspect.*;
 import me.suesslab.rogueblight.entity.Entity;
-import me.suesslab.rogueblight.entity.EntityController;
 import me.suesslab.rogueblight.entity.EntityInstance;
 import me.suesslab.rogueblight.entity.EntityType;
-import me.suesslab.rogueblight.interact.Interaction;
 import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.world.IWorld;
@@ -18,13 +15,13 @@ import java.util.UUID;
 
 public class Human extends EntityType {
 
-    protected Human(String name) {
+    public Human(String name) {
         super(name);
     }
 
     @Override
     protected EntityInstance getBody(Entity t) {
-        return new PlayerInstance(t);
+        return new HumanInstance(t);
     }
 
     @Override
@@ -34,18 +31,72 @@ public class Human extends EntityType {
 
     @Override
     public Entity create(IWorld world, Position pos) {
-        return null;
+        JsonObject defaultJson = new JsonObject();
+        defaultJson.addProperty("uuid", UUID.randomUUID().toString());
+        defaultJson.add("position", pos.getJSON());
+        defaultJson.add("inventory", new JsonArray());
+        defaultJson.add("name", getConfig().get("defaultHumanName"));
+        defaultJson.add("health", getConfig().get("defaultHumanHealth"));
+        Entity result = new Entity(this, world, defaultJson);
+        return result;
     }
 
-    public class PlayerInstance extends EntityInstance {
+    public class HumanInstance extends EntityInstance {
 
-        public PlayerInstance(Entity t) {
+        private ILivingComponent humanLivingComponent;
+        private Inventory i;
+
+        public HumanInstance(Entity t) {
             super(t);
+            humanLivingComponent = new HumanLivingComponent(t);
+            i = new Inventory(getEntity(), getEntity().getData().get("inventory").getAsJsonArray());
+        }
+
+        public class HumanLivingComponent implements  ILivingComponent {
+
+            private Entity entity;
+
+            private double health;
+
+            public HumanLivingComponent(Entity entity) {
+                this.entity = entity;
+                health = entity.getData().get("health").getAsDouble();
+            }
+
+            @Override
+            public Emotion getEmotion() {
+                return Emotion.NEUTRAL;
+            }
+
+            @Override
+            public Alignment getAlignment() {
+                return Alignment.NEUTRAL;
+            }
+
+            @Override
+            public double getHealthRemaining() {
+                return health;
+            }
+
+            @Override
+            public double getMaxHealth() {
+                return 100;
+            }
+
+
+            public int getMovementSpeed() {
+                return 5;
+            }
+
+            @Override
+            public void save() {
+                getEntity().getData().addProperty("health", getHealthRemaining());
+            }
         }
 
         @Override
         protected String getQualifiedName() {
-            return null;
+            return getEntity().getData().get("name").getAsString();
         }
 
         @Override
@@ -54,13 +105,17 @@ public class Human extends EntityType {
         }
 
         @Override
+        protected void save() {
+        }
+
+        @Override
         public Optional<Inventory> getInventoryComponent() {
-            return Optional.empty();
+            return Optional.of(i);
         }
 
         @Override
         public Optional<ILivingComponent> getLivingComponent() {
-            return Optional.empty();
+            return Optional.of(humanLivingComponent);
         }
 
         @Override

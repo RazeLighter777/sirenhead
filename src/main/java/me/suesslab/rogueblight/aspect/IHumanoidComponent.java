@@ -3,7 +3,7 @@ package me.suesslab.rogueblight.aspect;
 import me.suesslab.rogueblight.interact.EntityEntityInteraction;
 import me.suesslab.rogueblight.interact.Interaction;
 
-public interface IHumanoidComponent {
+public interface IHumanoidComponent extends IComponent {
 
     public HumanoidPose getPose();
 

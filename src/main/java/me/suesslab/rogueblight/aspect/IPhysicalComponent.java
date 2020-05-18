@@ -4,7 +4,7 @@ import me.suesslab.rogueblight.interact.*;
 
 import java.awt.*;
 
-public interface IPhysicalComponent {
+public interface IPhysicalComponent extends IComponent {
 
     //Properties
 

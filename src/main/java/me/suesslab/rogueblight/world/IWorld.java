@@ -32,4 +32,6 @@ public interface IWorld {
     public abstract void registerInteraction(Interaction action);
 
     public abstract Optional<Tile> getTileAtPosition(Position pos);
+
+    public abstract long getTick();
 }
