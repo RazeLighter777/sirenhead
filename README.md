@@ -3,7 +3,7 @@ This is an console based RPG project created by Justin Suess. It is written in J
 # Scope
 This RPG project is meant to be a base game that is highly extensible by dynamically loaded plugins. It runs in a terminal but will support tilesets in the future.
 # Current build 
-0.0.1 - DEV build. No functional gameplay get, but the pieces are there. Next version will bring basic character movement. 
+0.0.2 - DEV build. Generates a world you can walk around in. Your character is the @ symbol. Pick up the rock labeled E by pressing g.  
 # Features 
 - Support for infinite open worlds as well as predesigned levels.
 - Controller support.

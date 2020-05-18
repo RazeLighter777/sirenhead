@@ -133,7 +133,6 @@ public final class Inventory {
     private boolean removeItem(Item i) {
         if (items.contains(i)) {
             items.remove(i);
-            parent.body.registerInventoryChange();
             return true;
         }
         return false;
@@ -144,6 +143,8 @@ public final class Inventory {
             if ((i2.getItemsMass() + i.body.queryMass() <= i2.getMaxItemsMass())  || (i2.getMaxItemsMass() < 0)) {
                 if ((i2.getItemCount() + 1 <= i2.getMaxItemsCount()) || (i2.getMaxItemsCount() < 0)) {
                     i2.addItem(i);
+                    i2.parent.body.registerInventoryChange();
+                    i1.parent.body.registerInventoryChange();
                     return true;
                 }
             }
@@ -155,7 +156,6 @@ public final class Inventory {
 
     protected void addItem(Item i) {
         i.setParent(this);
-        parent.body.registerInventoryChange();
         items.add(i);
     }
 
