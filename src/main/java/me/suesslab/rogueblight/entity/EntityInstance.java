@@ -100,5 +100,7 @@ public abstract class EntityInstance {
     public abstract Optional<IHumanoidComponent> getHumanoidComponent();
 
     public abstract Optional<IPhysicalComponent> getPhysicalComponent();
-    
+
+    public abstract void registerInventoryChange();
+
 }

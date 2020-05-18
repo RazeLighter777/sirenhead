@@ -127,5 +127,10 @@ public class Human extends EntityType {
         public Optional<IPhysicalComponent> getPhysicalComponent() {
             return Optional.empty();
         }
+
+        @Override
+        public void registerInventoryChange() {
+
+        }
     }
 }

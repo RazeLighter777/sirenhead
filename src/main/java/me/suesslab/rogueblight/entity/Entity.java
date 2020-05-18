@@ -113,5 +113,5 @@ public final class Entity {
         //Call for the individual instance to save its properties.
         body.save();
     }
-    
+
 }

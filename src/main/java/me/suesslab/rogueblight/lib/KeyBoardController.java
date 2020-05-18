@@ -1,51 +1,66 @@
 package me.suesslab.rogueblight.lib;
 
-import me.suesslab.rogueblight.uix.IController;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.terminal.Terminal;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
-public class KeyBoardController implements IController, KeyListener {
+import java.io.IOException;
+
+
+public class KeyBoardController implements IController {
+
     private Direction currentDirection = Direction.NONE;
+    private Terminal inputTerminal;
+
+    public KeyBoardController(Terminal inputTerminal) {
+        this.inputTerminal = inputTerminal;
+    }
+
     @Override
     public Direction getDirection() {
-        return currentDirection;
-    }
-
-    @Override
-    public void keyTyped(KeyEvent keyEvent) {
-    }
-
-    @Override
-    public void keyPressed(KeyEvent keyEvent) {
-        int keycode = keyEvent.getKeyCode();
-        switch (keycode) {
-            case KeyEvent.VK_UP:
-                currentDirection = Direction.N;
-                break;
-            case KeyEvent.VK_DOWN:
-                currentDirection = Direction.S;
-                break;
-            case KeyEvent.VK_LEFT:
-                currentDirection = Direction.W;
-                break;
-            case KeyEvent.VK_RIGHT:
-                currentDirection = Direction.E;
-                break;
+        try {
+            KeyStroke keyStoke = inputTerminal.pollInput();
+            if (keyStoke == null) {
+                return Direction.NONE;
+            }
+            KeyType keyType = keyStoke.getKeyType();
+            switch (keyType) {
+                case ArrowDown:
+                    return Direction.S;
+                case ArrowUp:
+                    return Direction.N;
+                case ArrowLeft:
+                    return Direction.W;
+                case ArrowRight:
+                    return Direction.E;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return Direction.NONE;
+
     }
 
     @Override
-    public void keyReleased(KeyEvent keyEvent) {
-        int keycode = keyEvent.getKeyCode();
-        switch (keycode) {
-            case KeyEvent.VK_UP:
-            case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_RIGHT:
-                currentDirection = Direction.NONE;
-                break;
+    public boolean pickupKeyPressed() {
+        KeyStroke keyStoke = null;
+        try {
+            keyStoke = inputTerminal.pollInput();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        if (keyStoke == null) {
+            return false;
+        } else {
+            if (keyStoke.getKeyType().equals(KeyType.Character)) {
+                if (keyStoke.getCharacter() == 'g') {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
+
 
 }

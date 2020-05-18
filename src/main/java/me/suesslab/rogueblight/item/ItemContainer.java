@@ -112,5 +112,12 @@ public class ItemContainer extends EntityType {
         public Optional<IPhysicalComponent> getPhysicalComponent() {
             return Optional.empty();
         }
+
+        @Override
+        public void registerInventoryChange() {
+            if (i.getItemCount() == 0) {
+                getEntity().getWorld().removeEntity(getEntity().getUUID());
+            }
+        }
     }
 }

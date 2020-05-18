@@ -67,5 +67,4 @@ public final class Tile {
     public final TileType getType() {
         return type;
     }
-
 }

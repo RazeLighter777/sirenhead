@@ -31,6 +31,10 @@ public class Display implements ISubsystem {
     
     private SubsystemManager manager;
 
+    public Terminal getTerminal() {
+        return terminal;
+    }
+
     private Terminal terminal;
     private Screen screen;
     private IFrameProvider frameProvider;
@@ -45,6 +49,7 @@ public class Display implements ISubsystem {
     private Terminal createTerminal() throws IOException {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
         Terminal term = defaultTerminalFactory.createTerminal();
+
         return term;
     }
 

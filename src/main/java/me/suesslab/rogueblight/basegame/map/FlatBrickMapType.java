@@ -46,7 +46,7 @@ public class FlatBrickMapType extends TileMapType {
             tiles.clear();
             for (JsonElement tileData : json) {
                 Position position = new Position(tileData.getAsJsonArray().get(0).getAsJsonArray());
-                Optional<Tile> tile = world.loadTile(tileData.getAsJsonArray().get(1).getAsJsonObject());
+                Optional<Tile> tile = world.loadTile(tileData.getAsJsonArray().get(1).getAsJsonObject(), position);
                 if (tile.isPresent()) {
                     tiles.put(position, tile.get());
                 }

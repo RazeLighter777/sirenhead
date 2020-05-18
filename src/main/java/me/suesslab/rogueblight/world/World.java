@@ -3,6 +3,7 @@ package me.suesslab.rogueblight.world;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.interact.Interaction;
 import me.suesslab.rogueblight.item.Inventory;
@@ -12,10 +13,7 @@ import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.tile.Tile;
 import me.suesslab.rogueblight.tile.TileMap;
 import me.suesslab.rogueblight.tile.TileMapType;
-import me.suesslab.rogueblight.world.IWorld;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -31,9 +29,25 @@ public class World implements IWorld {
     private HashMap<UUID, Entity> entities;
     private TileMap map;
 
+    public Deque<Interaction> getInteractionLog() {
+        return interactionLog;
+    }
+
+    //Warning: Queue must be pruned to prevent entities from not being collected by the garbage collector
+    private Deque<Interaction> interactionLog;
+
     @Override
     public long getTick() {
         return tick;
+    }
+
+    @Override
+    public boolean removeEntity(UUID uuid) {
+        if (getEntityWithUUID(uuid).isPresent()) {
+            entities.remove(uuid);
+            return true;
+        }
+        return false;
     }
 
     private long tick;
@@ -42,6 +56,7 @@ public class World implements IWorld {
         this.levelManager = levelManager;
         levelManager.setWorld(this);
         entities = new HashMap<>();
+        interactionLog = new LinkedList<>();
     }
     public World(LevelManager levelManager, JsonObject worldData) {
         init(levelManager);
@@ -55,7 +70,7 @@ public class World implements IWorld {
         String mapTypeStr = worldData.get("mapType").getAsString();
         Optional<TileMapType> mapType = levelManager.getTileMapByName(mapTypeStr);
         assert(mapType.isPresent());
-        map = mapType.get().create(this);
+        map = mapType.get().create(this, worldData.get("map").getAsJsonArray());
         assert(map != null);
         worldData.add("map", map.getMapData());
         map.loadMap(worldData.get("map").getAsJsonArray());
@@ -125,8 +140,8 @@ public class World implements IWorld {
         return levelManager.createTile(tileName, pos);
     }
 
-    public Optional<Tile> loadTile(JsonObject tileData) {
-        return levelManager.loadTile(tileData);
+    public Optional<Tile> loadTile(JsonObject tileData, Position pos) {
+        return levelManager.loadTile(tileData, pos);
     }
 
     @Override
@@ -150,7 +165,10 @@ public class World implements IWorld {
 
     @Override
     public void registerInteraction(Interaction action) {
-
+        interactionLog.add(action);
+        if (interactionLog.size() > 100) {
+            interactionLog.removeFirst();
+        }
     }
 
     @Override

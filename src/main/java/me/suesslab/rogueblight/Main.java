@@ -36,13 +36,15 @@ public class Main {
         ItemContainer itemContainer = new ItemContainer();
         Stone stone = new Stone();
         world.createEntityInWorld(itemContainer.create(stone, world, new Position(1,0)));
-        KeyBoardController controller = new KeyBoardController();
+        KeyBoardController controller = new KeyBoardController(display.getTerminal());
         EntityDisplayController playerController = new EntityDisplayController(avatar, display, controller);
         avatar.body.setEntityController(playerController);
         display.setFrameProvider(playerController);
         while (true) {
-            System.out.println(avatar.getPos().getY());
             world.update();
+            System.out.println("" + avatar.getPos().getX() + " " + avatar.getPos().getY());
+            avatar.save();
+            System.out.println(avatar.getData().toString());
         }
     }
 }

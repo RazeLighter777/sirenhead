@@ -77,8 +77,7 @@ public class LevelManager implements ISubsystem {
         return Optional.empty();
     }
 
-    public Optional<Tile> loadTile(JsonObject tileData) {
-        Position pos = new Position(tileData.get("position").getAsJsonArray());
+    public Optional<Tile> loadTile(JsonObject tileData, Position pos) {
         if (!tileData.has("type")) {
             manager.getLogger().warning("Cannot create tile with missing type data: " + tileData.toString());
             return Optional.empty();

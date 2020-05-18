@@ -4,6 +4,9 @@ import com.googlecode.lanterna.TextCharacter;
 import me.suesslab.rogueblight.SubsystemManager;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityController;
+import me.suesslab.rogueblight.interact.Interaction;
+import me.suesslab.rogueblight.item.Inventory;
+import me.suesslab.rogueblight.lib.IController;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.tile.Tile;
 
@@ -43,8 +46,8 @@ public class EntityDisplayController extends EntityController implements IFrameP
                 //The position of the tile we are getting
                 Position absolutePosition = new Position(
                         //The x position of the tile we're drawing
-                        entity.getPos().getX() + (-(display.getScreenX() - 1)/2 + xpos),
-                        entity.getPos().getY() + (-(display.getScreenY() - 1)/2 + ypos)
+                        entity.getPos().getX() + (-(display.getScreenX() - 1) / 2 + xpos),
+                        entity.getPos().getY() + (-(display.getScreenY() - 1) / 2 + ypos)
                 );
                 Optional<Tile> tileAtPosition = entity.getWorld().getTileAtPosition(absolutePosition);
                 //TODO: Add method for objects to specify their appearance
@@ -62,6 +65,7 @@ public class EntityDisplayController extends EntityController implements IFrameP
             }
         }
     }
+
     private void printBottomText() {
 
     }
@@ -78,34 +82,76 @@ public class EntityDisplayController extends EntityController implements IFrameP
     @Override
     public void update() {
         if (entity.getWorld().getTick() >= nextMoveTick) {
-            switch (controller.getDirection()) {
-                case S:
-                    entity.getPos().setY(entity.getPos().getY() + 1);
-                    break;
-                case W:
-                    entity.getPos().setX(entity.getPos().getX() - 1);
-                    break;
-                case E:
-                    entity.getPos().setX(entity.getPos().getX() + 1);
-                    break;
-                case N:
-                    entity.getPos().setY(entity.getPos().getY() - 1);
-                case NE:
-                    break;
-                case NW:
-                    break;
-                case SE:
-                    break;
-                case SW:
-                    break;
-                case NONE:
-                default:
-                    break;
+            if (updateMovement()) {
+                return;
             }
-            if (controller.getDirection() != IController.Direction.NONE) {
-                nextMoveTick = entity.getWorld().getTick() + (entity.body.getLivingComponent().isPresent() ? 100L / (long)entity.body.getLivingComponent().get().getMovementSpeed()  : 1L);
+            if (pickupItem()) {
+                return;
             }
         }
+    }
 
+    public void addRelevantInteraction(Interaction e) {
+        entity.getWorld().registerInteraction(e);
+    }
+
+    public boolean updateMovement() {
+        Position oldPos = entity.getPos();
+
+        switch (controller.getDirection()) {
+            case S:
+                entity.getPos().setY(entity.getPos().getY() + 1);
+                break;
+            case W:
+                entity.getPos().setX(entity.getPos().getX() - 1);
+                break;
+            case E:
+                entity.getPos().setX(entity.getPos().getX() + 1);
+                break;
+            case N:
+                entity.getPos().setY(entity.getPos().getY() - 1);
+                break;
+            case NE:
+                entity.getPos().setY(entity.getPos().getY() - 1);
+                entity.getPos().setX(entity.getPos().getX() + 1);
+                break;
+            case NW:
+                entity.getPos().setY(entity.getPos().getY() - 1);
+                entity.getPos().setX(entity.getPos().getX() - 1);
+                break;
+            case SE:
+                entity.getPos().setY(entity.getPos().getY() + 1);
+                entity.getPos().setX(entity.getPos().getX() + 1);
+                break;
+            case SW:
+                entity.getPos().setY(entity.getPos().getY() + 1);
+                entity.getPos().setX(entity.getPos().getX() - 1);
+                break;
+            case NONE:
+            default:
+                break;
+        }
+        if (controller.getDirection() != IController.Direction.NONE) {
+            //Set the nextMoveTick based upon the distance rule and the movement speed.
+            nextMoveTick = entity.getWorld().getTick() + (long)(oldPos.distanceTo(entity.getPos()) * (double)(entity.body.getLivingComponent().isPresent() ? 100L / (long) entity.body.getLivingComponent().get().getMovementSpeed() : 1L));
+            return true;
+        }
+        return false;
+    }
+
+    public boolean pickupItem() {
+        if (!controller.pickupKeyPressed()) {
+            return false;
+        }
+        if (!entity.body.getInventoryComponent().isPresent()) {
+            return false;
+        }
+        for (Entity e : entity.getWorld().getEntitiesAtPosition(entity.getPos())) {
+            if (e.body.getPresentedItem().isPresent() && e.body.getInventoryComponent().isPresent()) {
+                return Inventory.transferItem(e.body.getInventoryComponent().get(), entity.body.getInventoryComponent().get(), e.body.getInventoryComponent().get().getItemByUUID(e.body.getPresentedItem().get()).get());
+            }
+        }
+        return false;
     }
 }
+

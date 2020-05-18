@@ -34,4 +34,6 @@ public interface IWorld {
     public abstract Optional<Tile> getTileAtPosition(Position pos);
 
     public abstract long getTick();
+
+    public abstract boolean removeEntity(UUID uuid);
 }

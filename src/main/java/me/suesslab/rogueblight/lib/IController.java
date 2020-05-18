@@ -1,4 +1,4 @@
-package me.suesslab.rogueblight.uix;
+package me.suesslab.rogueblight.lib;
 
 public interface IController {
 
@@ -16,4 +16,5 @@ public interface IController {
 
     public Direction getDirection();
 
+    public boolean pickupKeyPressed();
 }
