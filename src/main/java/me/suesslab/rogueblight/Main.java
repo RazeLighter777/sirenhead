@@ -12,7 +12,7 @@ import me.suesslab.rogueblight.lib.LevelManager;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.lib.Registry;
 import me.suesslab.rogueblight.uix.Display;
-import me.suesslab.rogueblight.uix.EntityDisplayController;
+import me.suesslab.rogueblight.uix.InteractiveEntityController;
 import me.suesslab.rogueblight.world.World;
 
 import java.awt.*;
@@ -37,14 +37,12 @@ public class Main {
         Stone stone = new Stone();
         world.createEntityInWorld(itemContainer.create(stone, world, new Position(1,0)));
         KeyBoardController controller = new KeyBoardController(display.getTerminal());
-        EntityDisplayController playerController = new EntityDisplayController(avatar, display, controller);
+        InteractiveEntityController playerController = new InteractiveEntityController(avatar, display, controller);
         avatar.body.setEntityController(playerController);
         display.setFrameProvider(playerController);
         while (true) {
             world.update();
             System.out.println("" + avatar.getPos().getX() + " " + avatar.getPos().getY());
-            avatar.save();
-            System.out.println(avatar.getData().toString());
         }
     }
 }

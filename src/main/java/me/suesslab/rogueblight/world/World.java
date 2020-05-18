@@ -15,18 +15,21 @@ import me.suesslab.rogueblight.tile.TileMap;
 import me.suesslab.rogueblight.tile.TileMapType;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class World implements IWorld {
 
     private LevelManager levelManager;
 
+    private final Object lock = new Object();
+
     public JsonObject getWorldData() {
         return worldData;
     }
 
     private JsonObject worldData;
-    private HashMap<UUID, Entity> entities;
+    private Map<UUID, Entity> entities;
     private TileMap map;
 
     public Deque<Interaction> getInteractionLog() {
@@ -44,7 +47,9 @@ public class World implements IWorld {
     @Override
     public boolean removeEntity(UUID uuid) {
         if (getEntityWithUUID(uuid).isPresent()) {
-            entities.remove(uuid);
+            synchronized (lock) {
+                getEntities().remove(uuid);
+            }
             return true;
         }
         return false;
@@ -55,7 +60,7 @@ public class World implements IWorld {
     private void init(LevelManager levelManager) {
         this.levelManager = levelManager;
         levelManager.setWorld(this);
-        entities = new HashMap<>();
+        entities = new ConcurrentHashMap<>();
         interactionLog = new LinkedList<>();
     }
     public World(LevelManager levelManager, JsonObject worldData) {
@@ -95,10 +100,13 @@ public class World implements IWorld {
     public void save() {
         //Saves all entities on the map.
         JsonArray entityData = new JsonArray();
-        for (Entity entity : entities.values()) {
-            entity.save();
-            entityData.add(entity.getData());
+        synchronized (lock) {
+            for (Entity entity : getEntities().values()) {
+                entity.save();
+                entityData.add(entity.getData());
+            }
         }
+
         worldData.add("entities", entityData);
         worldData.add("map", map.getMapData());
         worldData.addProperty("mapType", map.getName());
@@ -132,7 +140,7 @@ public class World implements IWorld {
 
     @Override
     public void createEntityInWorld(Entity entity) {
-        entities.put(entity.getUUID(), entity);
+        getEntities().put(entity.getUUID(), entity);
     }
 
 
@@ -146,21 +154,25 @@ public class World implements IWorld {
 
     @Override
     public Optional<Entity> getEntityWithUUID(UUID uuid) {
-        if (entities.containsKey(uuid)) {
-            return Optional.of(entities.get(uuid));
+        synchronized (lock) {
+            if (getEntities().containsKey(uuid)) {
+                return Optional.of(getEntities().get(uuid));
+            }
+            return Optional.empty();
         }
-        return Optional.empty();
     }
 
     @Override
     public List<Entity> getEntitiesAtPosition(Position pos) {
-        ArrayList<Entity> result = new ArrayList<>();
-        for (Entity entity : entities.values()) {
-            if (entity.getPos().equals(pos)) {
-                result.add(entity);
+        synchronized (lock) {
+            ArrayList<Entity> result = new ArrayList<>();
+            for (Entity entity : getEntities().values()) {
+                if (entity.getPos().equals(pos)) {
+                    result.add(entity);
+                }
             }
+            return result;
         }
-        return result;
     }
 
     @Override
@@ -182,10 +194,19 @@ public class World implements IWorld {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        for (Entity e : entities.values()) {
-            e.update();
+        synchronized (lock) {
+            for (Entity e : getEntities().values()) {
+                e.update();
+            }
         }
+
         tick++;
+    }
+
+    private Map<UUID, Entity> getEntities() {
+        synchronized (lock) {
+            return entities;
+        }
     }
 
 }

@@ -1,6 +1,6 @@
 package me.suesslab.rogueblight.lib;
 
-public interface IController {
+public interface IKeyPressDetector {
 
     enum Direction {
         W,

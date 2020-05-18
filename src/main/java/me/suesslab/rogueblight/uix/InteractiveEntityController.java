@@ -6,7 +6,7 @@ import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityController;
 import me.suesslab.rogueblight.interact.Interaction;
 import me.suesslab.rogueblight.item.Inventory;
-import me.suesslab.rogueblight.lib.IController;
+import me.suesslab.rogueblight.lib.IKeyPressDetector;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.tile.Tile;
 
@@ -14,16 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class EntityDisplayController extends EntityController implements IFrameProvider {
+public class InteractiveEntityController extends EntityController implements IFrameProvider {
 
     private Entity entity;
     private Display display;
     private SubsystemManager manager;
     private List<List<TextCharacter>> currentFrame;
-    private IController controller;
+    private IKeyPressDetector controller;
     private long nextMoveTick = 0;
 
-    public EntityDisplayController(Entity e, Display display, IController controller) {
+    public InteractiveEntityController(Entity e, Display display, IKeyPressDetector controller) {
         super(e);
         this.controller = controller;
         this.display = display;
@@ -131,7 +131,7 @@ public class EntityDisplayController extends EntityController implements IFrameP
             default:
                 break;
         }
-        if (controller.getDirection() != IController.Direction.NONE) {
+        if (controller.getDirection() != IKeyPressDetector.Direction.NONE) {
             //Set the nextMoveTick based upon the distance rule and the movement speed.
             nextMoveTick = entity.getWorld().getTick() + (long)(oldPos.distanceTo(entity.getPos()) * (double)(entity.body.getLivingComponent().isPresent() ? 100L / (long) entity.body.getLivingComponent().get().getMovementSpeed() : 1L));
             return true;
@@ -148,6 +148,7 @@ public class EntityDisplayController extends EntityController implements IFrameP
         }
         for (Entity e : entity.getWorld().getEntitiesAtPosition(entity.getPos())) {
             if (e.body.getPresentedItem().isPresent() && e.body.getInventoryComponent().isPresent()) {
+                nextMoveTick = entity.getWorld().getTick() + 5;
                 return Inventory.transferItem(e.body.getInventoryComponent().get(), entity.body.getInventoryComponent().get(), e.body.getInventoryComponent().get().getItemByUUID(e.body.getPresentedItem().get()).get());
             }
         }

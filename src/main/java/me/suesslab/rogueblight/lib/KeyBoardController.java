@@ -6,57 +6,70 @@ import com.googlecode.lanterna.terminal.Terminal;
 
 
 import java.io.IOException;
+import java.util.Optional;
+
+import static com.googlecode.lanterna.input.KeyType.ArrowDown;
+import static com.googlecode.lanterna.input.KeyType.ArrowUp;
 
 
-public class KeyBoardController implements IController {
+public class KeyBoardController implements IKeyPressDetector {
 
-    private Direction currentDirection = Direction.NONE;
     private Terminal inputTerminal;
+    private Optional<KeyStroke> currentKey;
 
     public KeyBoardController(Terminal inputTerminal) {
         this.inputTerminal = inputTerminal;
+        currentKey = Optional.empty();
     }
 
-    @Override
-    public Direction getDirection() {
+    private Optional<KeyStroke> getCurrentKey() {
+        if (!currentKey.isPresent()) {
+            getNextKey();
+        }
+        return currentKey;
+    }
+    private void getNextKey() {
+        KeyStroke nextKey = null;
         try {
-            KeyStroke keyStoke = inputTerminal.pollInput();
-            if (keyStoke == null) {
-                return Direction.NONE;
-            }
-            KeyType keyType = keyStoke.getKeyType();
-            switch (keyType) {
-                case ArrowDown:
-                    return Direction.S;
-                case ArrowUp:
-                    return Direction.N;
-                case ArrowLeft:
-                    return Direction.W;
-                case ArrowRight:
-                    return Direction.E;
-            }
+            nextKey = inputTerminal.pollInput();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if (nextKey == null) {
+            currentKey = Optional.empty();
+        } else {
+            currentKey = Optional.of(nextKey);
+        }
+    }
+    @Override
+    public Direction getDirection() {
+        Optional<KeyStroke> key = getCurrentKey();
+        if (key.isPresent()) {
+            switch (key.get().getKeyType()) {
+                case ArrowDown:
+                    getNextKey();
+                    return Direction.S;
+                case ArrowUp:
+                    getNextKey();
+                    return Direction.N;
+                case ArrowLeft:
+                    getNextKey();
+                    return Direction.W;
+                case ArrowRight:
+                    getNextKey();
+                    return Direction.E;
+            }
+        }
         return Direction.NONE;
-
     }
 
     @Override
     public boolean pickupKeyPressed() {
-        KeyStroke keyStoke = null;
-        try {
-            keyStoke = inputTerminal.pollInput();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (keyStoke == null) {
-            return false;
-        } else {
-            if (keyStoke.getKeyType().equals(KeyType.Character)) {
-                if (keyStoke.getCharacter() == 'g') {
-                    return true;
-                }
+        Optional<KeyStroke> keyStroke = getCurrentKey();
+        if (keyStroke.isPresent()) {
+            if (keyStroke.get().getCharacter() == 'g') {
+                getNextKey();
+                return true;
             }
         }
         return false;
