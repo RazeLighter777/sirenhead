@@ -26,6 +26,7 @@ import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
 import me.suesslab.rogueblight.SubsystemManager;
 import me.suesslab.rogueblight.item.Item;
+import me.suesslab.rogueblight.lib.IKeyStrokeHandler;
 import me.suesslab.rogueblight.lib.ISubsystem;
 import me.suesslab.rogueblight.lib.KeyBoardController;
 import me.suesslab.rogueblight.uix.gui.MultiItemSelectionWindow;
@@ -49,7 +50,7 @@ public class Display implements ISubsystem {
     private IFrameProvider frameProvider;
     private final static Object displayLock = new Object();
     private Thread thread;
-    private KeyBoardController keyBoardController;
+    private IKeyStrokeHandler keyBoardController;
 
     public boolean isMenuOpen() {
         if (gui.getWindows().isEmpty()) {
@@ -65,7 +66,7 @@ public class Display implements ISubsystem {
         thread = new Thread(new ScreenRendererThread());
     }
 
-    public void setKeyBoardController(KeyBoardController keyBoardController) {
+    public void setKeyBoardController(IKeyStrokeHandler keyBoardController) {
         this.keyBoardController = keyBoardController;
     }
 
@@ -136,9 +137,12 @@ public class Display implements ISubsystem {
                         frameProvider.getFrame().ifPresent(Display.this::drawFrame);
                     }
                     if (keyBoardController != null) {
-                        KeyStroke stroke = keyBoardController.poll();
+                        KeyStroke stroke = terminal.pollInput();
                         if ((isMenuOpen()) && stroke!=null) {
                             gui.handleInput(stroke);
+                        }
+                        if (!isMenuOpen() && stroke!=null) {
+                            keyBoardController.handleInput(stroke);
                         }
                     }
                     screen.refresh();
