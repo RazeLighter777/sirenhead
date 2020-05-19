@@ -17,4 +17,8 @@ public interface IKeyPressDetector {
     public Direction getDirection();
 
     public boolean pickupKeyPressed();
+
+    public boolean dropKeyPressed();
+
+
 }

@@ -6,51 +6,76 @@
 package me.suesslab.rogueblight.uix;
 
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
+import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
+
+import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.security.Key;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
+import com.googlecode.lanterna.terminal.swing.SwingTerminal;
+import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
+import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
 import me.suesslab.rogueblight.SubsystemManager;
+import me.suesslab.rogueblight.item.Item;
 import me.suesslab.rogueblight.lib.ISubsystem;
-import org.w3c.dom.Text;
+import me.suesslab.rogueblight.lib.KeyBoardController;
+import me.suesslab.rogueblight.uix.gui.MultiItemSelectionWindow;
+import me.suesslab.rogueblight.uix.gui.MultiStringSelectionWindow;
 
 /**
- *
  * @author justin
  */
 public class Display implements ISubsystem {
 
-    
+
     private SubsystemManager manager;
 
     public Terminal getTerminal() {
         return terminal;
     }
 
-    private Terminal terminal;
+    private SwingTerminalFrame terminal;
     private Screen screen;
+    private MultiWindowTextGUI gui;
     private IFrameProvider frameProvider;
     private final static Object displayLock = new Object();
     private Thread thread;
-    
+    private KeyBoardController keyBoardController;
+
+    public boolean isMenuOpen() {
+        if (gui.getWindows().isEmpty()) {
+            isMenuOpen = false;
+        }
+        return isMenuOpen;
+    }
+
+    private volatile boolean isMenuOpen = false;
+
     public Display() {
         setFrameProvider(new NullFrameProvider());
         thread = new Thread(new ScreenRendererThread());
     }
 
-    private Terminal createTerminal() throws IOException {
-        DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
-        Terminal term = defaultTerminalFactory.createTerminal();
+    public void setKeyBoardController(KeyBoardController keyBoardController) {
+        this.keyBoardController = keyBoardController;
+    }
 
-        return term;
+    private SwingTerminalFrame createTerminal() throws IOException {
+        //DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
+        //SwingTerminalFrame term = defaultTerminalFactory.createSwingTerminal();
+        SwingTerminalFrame terminal = new SwingTerminalFrame("Game", TerminalEmulatorAutoCloseTrigger.CloseOnEscape);
+        terminal.setSize(100, 100);
+        terminal.setVisible(true);
+        return terminal;
     }
 
     @Override
@@ -61,36 +86,70 @@ public class Display implements ISubsystem {
             manager.getLogger().info("Terminal created");
             screen = new TerminalScreen(terminal);
             screen.startScreen();
+            gui = new MultiWindowTextGUI(screen);
+            terminal.requestFocus();
+            //terminal.setFocusable(true);
+            terminal.setFocusTraversalKeysEnabled(false);
         } catch (IOException e) {
             manager.getLogger().severe("Unable to create terminal");
         }
         thread.start();
     }
 
-    protected class ScreenRendererThread implements  Runnable {
+
+    public void addStringSelectionWindow(String promptName, List<String> choices, MultiStringSelectionWindow.Callback callback) {
+        isMenuOpen = true;
+        gui.addWindowAndWait(new MultiStringSelectionWindow(promptName, choices, callback));
+    }
+
+    public void addItemSelectionWindow(String promptName, List<Item> choices, MultiItemSelectionWindow.Callback callback) {
+        isMenuOpen = true;
+        //gui.setBlockingIO(false);
+        gui.addWindow(new MultiItemSelectionWindow(promptName, choices, callback));
+    }
+
+    protected class ScreenRendererThread implements Runnable {
 
         private volatile boolean running = true;
 
         public void terminate() {
-            running  = false;
+            running = false;
         }
+
         public void run() {
             while (running) {
                 Optional<List<List<TextCharacter>>> frame = frameProvider.getFrame();
                 try {
-                    TimeUnit.MILLISECONDS.sleep((long)(1.0/(double)getRefreshRate() * 1000));
+                    TimeUnit.MILLISECONDS.sleep((long) (1.0 / (double) getRefreshRate() * 1000));
                 } catch (InterruptedException e) {
                     manager.getLogger().warning("Interrupted exception on frame");
                 }
-                frameProvider.getFrame().ifPresent(Display.this::drawFrame);
+
+
 
                 try {
+
+                    System.out.print(gui.getWindows().size());
+                    if (isMenuOpen()) {
+                        gui.updateScreen();
+                    } else {
+                        frameProvider.getFrame().ifPresent(Display.this::drawFrame);
+                    }
+                    if (keyBoardController != null) {
+                        KeyStroke stroke = keyBoardController.poll();
+                        if ((isMenuOpen()) && stroke!=null) {
+                            gui.handleInput(stroke);
+                        }
+                    }
                     screen.refresh();
+                    System.out.println(isMenuOpen());
                     screen.doResizeIfNecessary();
                     terminal.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+
             }
 
         }
@@ -126,15 +185,16 @@ public class Display implements ISubsystem {
             }
         }
     }
+
     public int getRefreshRate() {
         return Integer.parseInt(ResourceBundle.getBundle("Game").getString("refreshRate"));
     }
 
 
-
     public int getScreenX() {
         return screen.getTerminalSize().getColumns();
     }
+
     public int getScreenY() {
         return screen.getTerminalSize().getRows();
     }

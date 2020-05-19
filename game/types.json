@@ -1,5 +1,14 @@
 {
   "itemContainer" : {},
   "stone" : {},
-  "human" : {"defaultHumanName" :  "Steve", "defaultHumanHealth": 100.0}
+  "human" : {
+    "defaultHumanName" :  "Steve",
+    "defaultHumanHealth": 100.0,
+    "defaultStats" : {
+      "STRENGTH" : 1,
+      "INTEL" : 1,
+      "RESISTANCE" : 1,
+      "AGILITY" : 1
+    }
+  }
 }

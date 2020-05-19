@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import me.suesslab.rogueblight.aspect.IHumanoidComponent;
 import me.suesslab.rogueblight.aspect.IPhysicalComponent;
+import me.suesslab.rogueblight.aspect.StatsComponent;
 import me.suesslab.rogueblight.basegame.item.Stone;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityController;
@@ -118,6 +119,11 @@ public class ItemContainer extends EntityType {
             if (i.getItemCount() == 0) {
                 getEntity().getWorld().removeEntity(getEntity().getUUID());
             }
+        }
+
+        @Override
+        public Optional<StatsComponent> getStats() {
+            return Optional.empty();
         }
     }
 }

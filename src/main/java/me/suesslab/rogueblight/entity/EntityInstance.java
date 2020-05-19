@@ -21,10 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import me.suesslab.rogueblight.aspect.IComponent;
-import me.suesslab.rogueblight.aspect.IHumanoidComponent;
-import me.suesslab.rogueblight.aspect.ILivingComponent;
-import me.suesslab.rogueblight.aspect.IPhysicalComponent;
+import me.suesslab.rogueblight.aspect.*;
 import me.suesslab.rogueblight.interact.Interaction;
 import me.suesslab.rogueblight.item.Inventory;
 
@@ -75,6 +72,9 @@ public abstract class EntityInstance {
         if (getPhysicalComponent().isPresent()) {
             components.add(getPhysicalComponent().get());
         }
+        if (getStats().isPresent()) {
+            components.add(getStats().get());
+        }
         return components;
     }
 
@@ -102,5 +102,7 @@ public abstract class EntityInstance {
     public abstract Optional<IPhysicalComponent> getPhysicalComponent();
 
     public abstract void registerInventoryChange();
+
+    public abstract Optional<StatsComponent> getStats();
 
 }

@@ -37,6 +37,7 @@ public class Human extends EntityType {
         defaultJson.add("inventory", new JsonArray());
         defaultJson.add("name", getConfig().get("defaultHumanName"));
         defaultJson.add("health", getConfig().get("defaultHumanHealth"));
+        defaultJson.add("stats", getConfig().get("defaultStats").getAsJsonObject());
         Entity result = new Entity(this, world, defaultJson);
         return result;
     }
@@ -46,9 +47,12 @@ public class Human extends EntityType {
         private ILivingComponent humanLivingComponent;
         private Inventory i;
 
+        private StatsComponent statsComponent;
+
         public HumanInstance(Entity t) {
             super(t);
             humanLivingComponent = new HumanLivingComponent(t);
+            statsComponent = new StatsComponent(t);
             i = new Inventory(getEntity(), getEntity().getData().get("inventory").getAsJsonArray());
         }
 
@@ -57,6 +61,7 @@ public class Human extends EntityType {
             private Entity entity;
 
             private double health;
+
 
             public HumanLivingComponent(Entity entity) {
                 this.entity = entity;
@@ -131,6 +136,11 @@ public class Human extends EntityType {
         @Override
         public void registerInventoryChange() {
 
+        }
+
+        @Override
+        public Optional<StatsComponent> getStats() {
+            return Optional.empty();
         }
     }
 }

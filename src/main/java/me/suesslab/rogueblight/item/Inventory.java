@@ -22,10 +22,7 @@ import com.google.gson.JsonObject;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.world.IWorld;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  *
@@ -91,6 +88,10 @@ public final class Inventory {
         });
         Collections.sort(result);
         return result;
+    }
+
+    public List<Item> getItems() {
+        return items;
     }
 
     public ArrayList<UUID> getItemUUIDs() {

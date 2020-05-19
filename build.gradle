@@ -15,10 +15,10 @@ sourceCompatibility = '1.8'
 // your own implementation.
 //
 
-
 if (!hasProperty('mainClass')) {
     ext.mainClass = 'me.suesslab.rogueblight.Main'
 }
+
 
 //create a single Jar with all dependencies
 task fatJar(type: Jar) {
@@ -37,6 +37,7 @@ repositories {
     // You may define additional repositories, or even remove "mavenCentral()".
     // Read more about repositories here:
     //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 dependencies {
@@ -46,7 +47,8 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.10'
     // https://mvnrepository.com/artifact/com.googlecode.lanterna/lanterna
     compile group: 'com.googlecode.lanterna', name: 'lanterna', version: '3.1.0-alpha1'
-    implementation 'com.google.code.gson:gson:2.8.6'
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
 }
 
 

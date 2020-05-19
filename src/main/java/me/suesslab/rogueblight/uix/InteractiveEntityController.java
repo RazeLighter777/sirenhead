@@ -6,13 +6,13 @@ import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityController;
 import me.suesslab.rogueblight.interact.Interaction;
 import me.suesslab.rogueblight.item.Inventory;
+import me.suesslab.rogueblight.item.Item;
+import me.suesslab.rogueblight.item.ItemContainer;
 import me.suesslab.rogueblight.lib.IKeyPressDetector;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.tile.Tile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class InteractiveEntityController extends EntityController implements IFrameProvider {
 
@@ -22,7 +22,6 @@ public class InteractiveEntityController extends EntityController implements IFr
     private List<List<TextCharacter>> currentFrame;
     private IKeyPressDetector controller;
     private long nextMoveTick = 0;
-
     public InteractiveEntityController(Entity e, Display display, IKeyPressDetector controller) {
         super(e);
         this.controller = controller;
@@ -82,18 +81,65 @@ public class InteractiveEntityController extends EntityController implements IFr
     @Override
     public void update() {
         if (entity.getWorld().getTick() >= nextMoveTick) {
+            //if a movement key is pressed, move.
             if (updateMovement()) {
                 return;
             }
-            if (pickupItem()) {
+            //if the pickup item key is pressed, pickup the item.
+            if (openPickupMenu()) {
                 return;
+            }
+            //If the drop menu key is pressed, open up the drop menu.
+            if (openDropMenu()) {
+                return;
+            }
+            //if there are items to drop drop them.
+            if (itemDropIndex != null) {
+                dropQueuedItems();
+            }
+            //if there are items to pickup pick them up
+            if (pickupItemQueue != null) {
+                pickupQueuedItems();
             }
         }
     }
 
+
+
     public void addRelevantInteraction(Interaction e) {
         entity.getWorld().registerInteraction(e);
     }
+
+    private volatile List<Item> itemDropIndex = null;
+
+    //Item Drop code.
+    private void dropItem(UUID item) {
+        Inventory inv = entity.body.getInventoryComponent().get();
+        ItemContainer itemContainer = new ItemContainer();
+        entity.getWorld().createEntityInWorld(itemContainer.create(inv,item,entity.getWorld(),entity.getPos()));
+    }
+    private void dropInventoryItemCallback(List<Item> drops) {
+        itemDropIndex = drops;
+    }
+    private void dropQueuedItems() {
+        Iterator<Item> itemIterator = itemDropIndex.iterator();
+        while (itemIterator.hasNext()) {
+            Item i = itemIterator.next();
+            dropItem(i.getUUID());
+        }
+        nextMoveTick = entity.getWorld().getTick() + 5;
+        itemDropIndex = null;
+    }
+    public boolean openDropMenu() {
+        if ((controller.dropKeyPressed()) && (display.isMenuOpen() == false)) {
+            Inventory i = entity.body.getInventoryComponent().get();
+            display.addItemSelectionWindow("Drop which items?", i.getItems(),this::dropInventoryItemCallback);
+            return true;
+        }
+        return false;
+    }
+
+
 
     public boolean updateMovement() {
         Position oldPos = entity.getPos();
@@ -139,20 +185,56 @@ public class InteractiveEntityController extends EntityController implements IFr
         return false;
     }
 
-    public boolean pickupItem() {
-        if (!controller.pickupKeyPressed()) {
-            return false;
+    //Item pickup code
+    //Item Drop code.
+    private volatile List<Item> pickupItemQueue = null;
+    private void pickupItem(Entity container) {
+        Inventory inv = entity.body.getInventoryComponent().get();
+    }
+    private void pickupItemCallback(List<Item> pickups) {
+        pickupItemQueue = pickups;
+    }
+    private void pickupQueuedItems() {
+        Iterator<Item> itemIterator = pickupItemQueue.iterator();
+        while (itemIterator.hasNext()) {
+            Item i = itemIterator.next();
+            Inventory.transferItem(i.getParent(), entity.body.getInventoryComponent().get(), i);
         }
-        if (!entity.body.getInventoryComponent().isPresent()) {
-            return false;
-        }
-        for (Entity e : entity.getWorld().getEntitiesAtPosition(entity.getPos())) {
-            if (e.body.getPresentedItem().isPresent() && e.body.getInventoryComponent().isPresent()) {
-                nextMoveTick = entity.getWorld().getTick() + 5;
-                return Inventory.transferItem(e.body.getInventoryComponent().get(), entity.body.getInventoryComponent().get(), e.body.getInventoryComponent().get().getItemByUUID(e.body.getPresentedItem().get()).get());
+        nextMoveTick = entity.getWorld().getTick() + 5;
+        pickupItemQueue = null;
+    }
+    public boolean openPickupMenu() {
+        if ((controller.pickupKeyPressed()) && (display.isMenuOpen() == false)) {
+            Inventory i = entity.body.getInventoryComponent().get();
+            List<Entity> entitiesAtPosition = entity.getWorld().getEntitiesAtPosition(entity.getPos());
+            List<Entity> itemContainersAtPosition = new ArrayList<>();
+            for (Entity e : entitiesAtPosition) {
+                if (e.body.getPresentedItem().isPresent()) {
+                    itemContainersAtPosition.add(e);
+                }
             }
+            List<Item> itemsAtPosition = new ArrayList<>();
+            for (Entity e : itemContainersAtPosition) {
+                if (e.body.getInventoryComponent().isPresent()) {
+                    if (e.body.getInventoryComponent().get().getItemByUUID(e.body.getPresentedItem().get()).isPresent()) {
+                        itemsAtPosition.add(e.body.getInventoryComponent().get().getItemByUUID(e.body.getPresentedItem().get()).get());
+                    }
+                }
+            }
+            if (itemsAtPosition.size() == 0) {
+                return false;
+            }
+            else if (itemsAtPosition.size() == 1) {
+                pickupItemQueue = itemsAtPosition;
+                return true;
+            } else {
+                display.addItemSelectionWindow("Pick up which items?", itemsAtPosition,this::pickupItemCallback);
+                return true;
+            }
+
         }
         return false;
     }
+
 }
 

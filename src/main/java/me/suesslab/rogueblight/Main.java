@@ -30,19 +30,27 @@ public class Main {
         registry.addPlugin(new BaseGamePlugin());
         World world = new World(lvm);
         Human human  = new Human("human");
-        human.setConfig(JsonParser.parseString("{\"defaultHumanName\" :  \"Steve\", \"defaultHumanHealth\": 100.0}").getAsJsonObject());
+        human.setConfig(JsonParser.parseString("{\"defaultHumanName\" :  \"Steve\", \"defaultHumanHealth\": 100.0, \"defaultStats\" : {\n" +
+                "      \"STRENGTH\" : 1,\n" +
+                "      \"INTEL\" : 1,\n" +
+                "      \"RESISTANCE\" : 1,\n" +
+                "      \"AGILITY\" : 1\n" +
+                "    }}").getAsJsonObject());
         Entity avatar = human.create(world, new Position(0,0));
         world.createEntityInWorld(avatar);
         ItemContainer itemContainer = new ItemContainer();
         Stone stone = new Stone();
         world.createEntityInWorld(itemContainer.create(stone, world, new Position(1,0)));
+        world.createEntityInWorld(itemContainer.create(stone, world, new Position(4,-3)));
+        world.createEntityInWorld(itemContainer.create(stone, world, new Position(3,2)));
         KeyBoardController controller = new KeyBoardController(display.getTerminal());
+        display.setKeyBoardController(controller);
         InteractiveEntityController playerController = new InteractiveEntityController(avatar, display, controller);
         avatar.body.setEntityController(playerController);
         display.setFrameProvider(playerController);
         while (true) {
             world.update();
-            System.out.println("" + avatar.getPos().getX() + " " + avatar.getPos().getY());
+            //System.out.println(avatar.getPos().getJSON().toString());
         }
     }
 }
