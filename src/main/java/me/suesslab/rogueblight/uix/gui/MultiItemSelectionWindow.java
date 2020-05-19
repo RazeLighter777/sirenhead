@@ -8,6 +8,7 @@ import com.googlecode.lanterna.gui2.Panel;
 import me.suesslab.rogueblight.item.Item;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MultiItemSelectionWindow extends BasicWindow {
@@ -27,6 +28,7 @@ public class MultiItemSelectionWindow extends BasicWindow {
     }
     public MultiItemSelectionWindow(String category, List<Item> options, MultiItemSelectionWindow.Callback t) {
         super(category);
+        setHints(Arrays.asList(Hint.CENTERED));
         this.options = options;
         box = new CheckBoxList<>();
         Panel panel = new Panel();

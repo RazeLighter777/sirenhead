@@ -50,7 +50,8 @@ public class Main {
         display.setFrameProvider(playerController);
         while (true) {
             world.update();
-            //System.out.println(avatar.getPos().getJSON().toString());
+            world.save();
+            //System.out.println(world.getWorldData().toString());
         }
     }
 }

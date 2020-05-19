@@ -1,9 +1,11 @@
 package me.suesslab.rogueblight.uix.gui;
 
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -23,6 +25,7 @@ public class MultiStringSelectionWindow extends BasicWindow {
     }
     public MultiStringSelectionWindow(String category, List<String> options, Callback t) {
         super(category);
+        setHints(Arrays.asList(Hint.CENTERED));
         box = new CheckBoxList<>();
         Panel panel = new Panel();
         panel.addComponent(box);

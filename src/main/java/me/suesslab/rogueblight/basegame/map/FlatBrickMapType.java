@@ -12,6 +12,7 @@ import me.suesslab.rogueblight.world.World;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FlatBrickMapType extends TileMapType {
 
@@ -34,11 +35,11 @@ public class FlatBrickMapType extends TileMapType {
 
     public static class FlatBrickMap extends TileMap {
 
-        private HashMap<Position, Tile> tiles;
+        private ConcurrentHashMap<Position, Tile> tiles;
 
         public FlatBrickMap(World world) {
             super(world);
-            tiles = new HashMap<>();
+            tiles = new ConcurrentHashMap<>();
         }
 
         @Override

@@ -100,7 +100,7 @@ public class Display implements ISubsystem {
 
     public void addStringSelectionWindow(String promptName, List<String> choices, MultiStringSelectionWindow.Callback callback) {
         isMenuOpen = true;
-        gui.addWindowAndWait(new MultiStringSelectionWindow(promptName, choices, callback));
+        gui.addWindow(new MultiStringSelectionWindow(promptName, choices, callback));
     }
 
     public void addItemSelectionWindow(String promptName, List<Item> choices, MultiItemSelectionWindow.Callback callback) {
