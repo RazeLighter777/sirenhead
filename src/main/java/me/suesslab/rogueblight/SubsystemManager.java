@@ -60,6 +60,7 @@ public class SubsystemManager {
     
     public boolean requestShutdown() {
         LOGGER.info("Shutdown requested");
+        shutdown();
         return false;
     }
 

@@ -7,10 +7,7 @@ import me.suesslab.rogueblight.basegame.entity.Human;
 import me.suesslab.rogueblight.basegame.item.Stone;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.item.ItemContainer;
-import me.suesslab.rogueblight.lib.KeyBoardController;
-import me.suesslab.rogueblight.lib.LevelManager;
-import me.suesslab.rogueblight.lib.Position;
-import me.suesslab.rogueblight.lib.Registry;
+import me.suesslab.rogueblight.lib.*;
 import me.suesslab.rogueblight.uix.Display;
 import me.suesslab.rogueblight.uix.InteractiveEntityController;
 import me.suesslab.rogueblight.world.World;
@@ -26,10 +23,14 @@ public class Main {
         Registry registry = new Registry();
         LevelManager lvm = new LevelManager(registry);
         Display display = new Display();
-        SubsystemManager partialManager = new SubsystemManager(Arrays.asList(registry, lvm, display));
+        GameController gameController = new GameController(registry, lvm, display);
+        SubsystemManager partialManager = new SubsystemManager(Arrays.asList(registry, lvm, display, gameController));
         registry.addPlugin(new BaseGamePlugin());
-        World world = new World(lvm);
-        Human human  = new Human("human");
+        KeyBoardController controller = new KeyBoardController(display.getTerminal());
+        display.setKeyBoardController(controller);
+        gameController.startGame();
+        partialManager.requestShutdown();
+        /*Human human  = new Human("human");
         human.setConfig(JsonParser.parseString("{\"defaultHumanName\" :  \"Steve\", \"defaultHumanHealth\": 100.0, \"defaultStats\" : {\n" +
                 "      \"STRENGTH\" : 1,\n" +
                 "      \"INTEL\" : 1,\n" +
@@ -52,6 +53,6 @@ public class Main {
             world.update();
             world.save();
             //System.out.println(world.getWorldData().toString());
-        }
+        }*/
     }
 }

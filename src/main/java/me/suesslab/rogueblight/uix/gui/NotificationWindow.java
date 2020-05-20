@@ -13,5 +13,7 @@ public class NotificationWindow extends BasicWindow {
         Label label = new Label(notification);
         Button button = new Button("OK", () -> close());
         panel.addComponent(label);
+        panel.addComponent(button);
+        setComponent(panel);
     }
 }

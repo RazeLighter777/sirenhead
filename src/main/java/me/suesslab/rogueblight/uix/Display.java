@@ -7,6 +7,7 @@ package me.suesslab.rogueblight.uix;
 
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
@@ -14,6 +15,7 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.io.IOException;
 import java.security.Key;
 import java.util.List;
@@ -31,6 +33,8 @@ import me.suesslab.rogueblight.lib.ISubsystem;
 import me.suesslab.rogueblight.lib.KeyBoardController;
 import me.suesslab.rogueblight.uix.gui.MultiItemSelectionWindow;
 import me.suesslab.rogueblight.uix.gui.MultiStringSelectionWindow;
+import me.suesslab.rogueblight.uix.gui.NotificationWindow;
+import me.suesslab.rogueblight.uix.gui.StringSelectionWindow;
 
 /**
  * @author justin
@@ -98,15 +102,25 @@ public class Display implements ISubsystem {
     }
 
 
-    public void addStringSelectionWindow(String promptName, List<String> choices, MultiStringSelectionWindow.Callback callback) {
+    public void addMultipleStringSelectionWindow(String promptName, List<String> choices, MultiStringSelectionWindow.Callback callback) {
         isMenuOpen = true;
         gui.addWindow(new MultiStringSelectionWindow(promptName, choices, callback));
+    }
+
+    public void addStringSelectionWindow(String promptName, List<String> choices, StringSelectionWindow.Callback t) {
+        isMenuOpen = true;
+        gui.addWindow(new StringSelectionWindow(promptName, choices, t));
     }
 
     public void addItemSelectionWindow(String promptName, List<Item> choices, MultiItemSelectionWindow.Callback callback) {
         isMenuOpen = true;
         //gui.setBlockingIO(false);
         gui.addWindow(new MultiItemSelectionWindow(promptName, choices, callback));
+    }
+
+    public void addNotificationWindow(String promptName, String message) {
+        isMenuOpen = true;
+        gui.addWindow(new NotificationWindow(promptName, message));
     }
 
     protected class ScreenRendererThread implements Runnable {
@@ -130,7 +144,6 @@ public class Display implements ISubsystem {
 
                 try {
 
-                    System.out.print(gui.getWindows().size());
                     if (isMenuOpen()) {
                         gui.updateScreen();
                     } else {
@@ -146,7 +159,6 @@ public class Display implements ISubsystem {
                         }
                     }
                     screen.refresh();
-                    System.out.println(isMenuOpen());
                     screen.doResizeIfNecessary();
                     terminal.flush();
                 } catch (IOException e) {
@@ -203,10 +215,25 @@ public class Display implements ISubsystem {
         return screen.getTerminalSize().getRows();
     }
 
+    public String fileSelectionDialog(String title, String desc) {
+        File input = new FileDialogBuilder()
+                .setTitle(title)
+                .setDescription(desc)
+                .setActionLabel("Open")
+                .build()
+                .showDialog(gui);
+        return input.getAbsolutePath();
+    }
+
+    public void blockingMessage(String promptName, String message) {
+        gui.addWindowAndWait(new NotificationWindow(promptName, message));
+    }
     @Override
     public void stop() {
         //TODO: Remove deprecated method.
         thread.stop();
+        terminal.clearScreen();
+        terminal.close();
     }
 
 }
