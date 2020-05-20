@@ -32,6 +32,8 @@ public class World implements IWorld {
     private Map<UUID, Entity> entities;
     private TileMap map;
 
+
+
     public Deque<Interaction> getInteractionLog() {
         return interactionLog;
     }
@@ -203,7 +205,7 @@ public class World implements IWorld {
         tick++;
     }
 
-    private Map<UUID, Entity> getEntities() {
+    public Map<UUID, Entity> getEntities() {
         synchronized (lock) {
             return entities;
         }

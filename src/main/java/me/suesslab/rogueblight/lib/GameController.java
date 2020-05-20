@@ -1,11 +1,17 @@
 package me.suesslab.rogueblight.lib;
 
+import com.google.gson.JsonParser;
 import com.googlecode.lanterna.TextCharacter;
 import me.suesslab.rogueblight.SubsystemManager;
+import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.uix.Display;
 import me.suesslab.rogueblight.uix.IFrameProvider;
+import me.suesslab.rogueblight.uix.InteractiveEntityController;
+import me.suesslab.rogueblight.world.World;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.*;
 
 public class GameController implements  ISubsystem, IFrameProvider  {
@@ -79,7 +85,36 @@ public class GameController implements  ISubsystem, IFrameProvider  {
         if (!file.exists() ||  !fileName.endsWith(".json")) {
             display.blockingMessage("EAT MY ASS", "That file doesn't have the right extension. You need a .json");
         }
-        System.out.println("file");
+        try {
+            FileReader fileReader = new FileReader(file);
+            World world = new World(levelManager, JsonParser.parseReader(fileReader).getAsJsonObject());
+            display.blockingMessage("Great Victory!", "World loaded successfully!");
+            //Attach to the first local player in the save.
+            Entity player = null;
+            for (Entity e : world.getEntities().values()) {
+                if (e.getData().has("isLocalPlayer")) {
+                    KeyBoardController controller = new KeyBoardController(display.getTerminal());
+                    display.setKeyBoardController(controller);
+                    InteractiveEntityController playerController = new InteractiveEntityController(e, display, controller);
+                    display.setFrameProvider(playerController);
+                    e.body.setEntityController(playerController);
+                    player = e;
+                    break;
+                }
+            }
+            display.closeGui();
+            while (true) {
+                world.update();
+                if (!world.getEntities().containsValue(player)) {
+                    break;
+                }
+                world.save();
+            }
+            //display.setFrameProvider(this);
+        } catch (FileNotFoundException e) {
+            display.blockingMessage("GLITCH", "FileNotFoundException");
+            return;
+        }
     }
 
     @Override

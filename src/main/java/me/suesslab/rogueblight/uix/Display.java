@@ -7,6 +7,7 @@ package me.suesslab.rogueblight.uix;
 
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
+import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
@@ -133,7 +134,7 @@ public class Display implements ISubsystem {
 
         public void run() {
             while (running) {
-                Optional<List<List<TextCharacter>>> frame = frameProvider.getFrame();
+                 Optional<List<List<TextCharacter>>> frame = frameProvider.getFrame();
                 try {
                     TimeUnit.MILLISECONDS.sleep((long) (1.0 / (double) getRefreshRate() * 1000));
                 } catch (InterruptedException e) {
@@ -176,6 +177,11 @@ public class Display implements ISubsystem {
     }
 
 
+    public void closeGui() {
+        for (Window w : gui.getWindows()) {
+            w.close();
+        }
+    }
     protected void drawFrame(List<List<TextCharacter>> frame) {
         synchronized (displayLock) {
             //Drop the frame if it doesn't fit the screen

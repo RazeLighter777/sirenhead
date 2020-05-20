@@ -28,6 +28,7 @@ public class InteractiveEntityController extends EntityController implements IFr
         this.display = display;
         currentFrame = new ArrayList<>();
         this.entity = e;
+        e.getData().addProperty("isLocalPlayer", true);
     }
 
     @Override
@@ -94,7 +95,7 @@ public class InteractiveEntityController extends EntityController implements IFr
                 return;
             }
             //if there are items to drop drop them.
-            if (itemDropIndex != null) {
+            if (itemDropQueue != null) {
                 dropQueuedItems();
             }
             //if there are items to pickup pick them up
@@ -110,8 +111,7 @@ public class InteractiveEntityController extends EntityController implements IFr
         entity.getWorld().registerInteraction(e);
     }
 
-    private volatile List<Item> itemDropIndex = null;
-
+    private volatile List<Item> itemDropQueue = null;
     //Item Drop code.
     private void dropItem(UUID item) {
         Inventory inv = entity.body.getInventoryComponent().get();
@@ -119,16 +119,16 @@ public class InteractiveEntityController extends EntityController implements IFr
         entity.getWorld().createEntityInWorld(itemContainer.create(inv,item,entity.getWorld(),entity.getPos()));
     }
     private void dropInventoryItemCallback(List<Item> drops) {
-        itemDropIndex = drops;
+        itemDropQueue = drops;
     }
     private void dropQueuedItems() {
-        Iterator<Item> itemIterator = itemDropIndex.iterator();
+        Iterator<Item> itemIterator = itemDropQueue.iterator();
         while (itemIterator.hasNext()) {
             Item i = itemIterator.next();
             dropItem(i.getUUID());
         }
         nextMoveTick = entity.getWorld().getTick() + 5;
-        itemDropIndex = null;
+        itemDropQueue = null;
     }
     public boolean openDropMenu() {
         if ((controller.dropKeyPressed()) && (display.isMenuOpen() == false)) {
