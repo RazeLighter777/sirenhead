@@ -38,6 +38,7 @@ public abstract class EntityItemInteraction extends Interaction {
     protected Item target;
 
     public EntityItemInteraction(Entity origin, Item target) {
+        this.origin = origin;
         this.target = target;
     }
 

@@ -1,10 +1,12 @@
 package me.suesslab.rogueblight.uix;
 
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.TextColor;
 import me.suesslab.rogueblight.SubsystemManager;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityController;
 import me.suesslab.rogueblight.interact.Interaction;
+import me.suesslab.rogueblight.interact.implementations.DropInteraction;
 import me.suesslab.rogueblight.interact.implementations.PickupInteraction;
 import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.Item;
@@ -83,7 +85,7 @@ public class InteractiveEntityController extends EntityController implements IFr
         if (relevantInteractionsLog.size() > 0) {
             int ypos = display.getScreenY() - 1;
             for (int xpos = 0; (xpos < display.getScreenX()) && (xpos < relevantInteractionsLog.getTop().length()); xpos++) {
-                currentFrame.get(xpos).set(ypos, new TextCharacter(relevantInteractionsLog.getTop().charAt(xpos)));
+                currentFrame.get(xpos).set(ypos, new TextCharacter(relevantInteractionsLog.getTop().charAt(xpos), TextColor.ANSI.CYAN, TextColor.ANSI.BLACK));
             }
         }
 
@@ -130,8 +132,9 @@ public class InteractiveEntityController extends EntityController implements IFr
         while (itemIterator.hasNext()) {
             Item i = itemIterator.next();
             dropItem(i.getUUID());
+            entity.sendInteraction(new DropInteraction(entity, i));
+            nextMoveTick = entity.getWorld().getTick() + 5;
         }
-        nextMoveTick = entity.getWorld().getTick() + 5;
         itemDropQueue = null;
     }
     public boolean openDropMenu() {
