@@ -9,9 +9,7 @@ import me.suesslab.rogueblight.uix.IFrameProvider;
 import me.suesslab.rogueblight.uix.InteractiveEntityController;
 import me.suesslab.rogueblight.world.World;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 import java.util.*;
 
 public class GameController implements  ISubsystem, IFrameProvider  {
@@ -19,6 +17,7 @@ public class GameController implements  ISubsystem, IFrameProvider  {
     private Registry registry;
     private LevelManager levelManager;
     private Display display;
+    private SubsystemManager manager;
 
     public GameController(Registry registry, LevelManager lvm, Display display) {
         this.registry = registry;
@@ -28,6 +27,7 @@ public class GameController implements  ISubsystem, IFrameProvider  {
     @Override
     public void init(SubsystemManager manager) {
         display.setFrameProvider(this);
+        this.manager = manager;
     }
 
     public void startGame() {
@@ -103,17 +103,26 @@ public class GameController implements  ISubsystem, IFrameProvider  {
                 }
             }
             display.closeGui();
+            fileReader.close();
             while (true) {
                 world.update();
                 if (!world.getEntities().containsValue(player)) {
                     break;
                 }
-                world.save();
+                if (world.getTick() % 1000 == 0) {
+                    manager.getLogger().info("Saving world");
+                    FileWriter writer = new FileWriter(file, false);
+                    world.save();
+                    writer.write(world.getWorldData().toString());
+                    writer.close();
+                }
             }
             //display.setFrameProvider(this);
         } catch (FileNotFoundException e) {
             display.blockingMessage("GLITCH", "FileNotFoundException");
             return;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

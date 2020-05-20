@@ -49,7 +49,7 @@ public class Display implements ISubsystem {
         return terminal;
     }
 
-    private SwingTerminalFrame terminal;
+    private Terminal terminal;
     private Screen screen;
     private MultiWindowTextGUI gui;
     private IFrameProvider frameProvider;
@@ -75,13 +75,14 @@ public class Display implements ISubsystem {
         this.keyBoardController = keyBoardController;
     }
 
-    private SwingTerminalFrame createTerminal() throws IOException {
-        //DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
+    private Terminal createTerminal() throws IOException {
+        DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
+        Terminal term = defaultTerminalFactory.createTerminal();
         //SwingTerminalFrame term = defaultTerminalFactory.createSwingTerminal();
-        SwingTerminalFrame terminal = new SwingTerminalFrame("Game", TerminalEmulatorAutoCloseTrigger.CloseOnEscape);
-        terminal.setSize(100, 100);
-        terminal.setVisible(true);
-        return terminal;
+        //SwingTerminalFrame terminal = new SwingTerminalFrame("Game", TerminalEmulatorAutoCloseTrigger.CloseOnEscape);
+        //terminal.setSize(100, 100);
+        //terminal.setVisible(true);
+        return term;
     }
 
     @Override
@@ -93,9 +94,9 @@ public class Display implements ISubsystem {
             screen = new TerminalScreen(terminal);
             screen.startScreen();
             gui = new MultiWindowTextGUI(screen);
-            terminal.requestFocus();
+            //terminal.requestFocus();
             //terminal.setFocusable(true);
-            terminal.setFocusTraversalKeysEnabled(false);
+            //terminal.setFocusTraversalKeysEnabled(false);
         } catch (IOException e) {
             manager.getLogger().severe("Unable to create terminal");
         }
@@ -238,8 +239,12 @@ public class Display implements ISubsystem {
     public void stop() {
         //TODO: Remove deprecated method.
         thread.stop();
-        terminal.clearScreen();
-        terminal.close();
+        try {
+            terminal.clearScreen();
+            terminal.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

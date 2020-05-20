@@ -20,6 +20,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.suesslab.rogueblight.entity.Entity;
+import me.suesslab.rogueblight.interact.Interaction;
 import me.suesslab.rogueblight.world.IWorld;
 
 import java.util.*;
