@@ -5,11 +5,13 @@ import me.suesslab.rogueblight.SubsystemManager;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityController;
 import me.suesslab.rogueblight.interact.Interaction;
+import me.suesslab.rogueblight.interact.implementations.PickupInteraction;
 import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.Item;
 import me.suesslab.rogueblight.item.ItemContainer;
-import me.suesslab.rogueblight.lib.IKeyPressDetector;
+import me.suesslab.rogueblight.lib.io.IKeyPressDetector;
 import me.suesslab.rogueblight.lib.Position;
+import me.suesslab.rogueblight.literary.StringLog;
 import me.suesslab.rogueblight.tile.Tile;
 
 import java.util.*;
@@ -22,12 +24,14 @@ public class InteractiveEntityController extends EntityController implements IFr
     private List<List<TextCharacter>> currentFrame;
     private IKeyPressDetector controller;
     private long nextMoveTick = 0;
+    private StringLog relevantInteractionsLog;
     public InteractiveEntityController(Entity e, Display display, IKeyPressDetector controller) {
         super(e);
         this.controller = controller;
         this.display = display;
         currentFrame = new ArrayList<>();
         this.entity = e;
+        relevantInteractionsLog = new StringLog(100);
         e.getData().addProperty("isLocalPlayer", true);
     }
 
@@ -36,7 +40,7 @@ public class InteractiveEntityController extends EntityController implements IFr
         currentFrame.clear();
         blankCanvas();
         constructMap();
-        printBottomText();
+        drawBottomLog();
         return Optional.of(currentFrame);
     }
 
@@ -66,10 +70,6 @@ public class InteractiveEntityController extends EntityController implements IFr
         }
     }
 
-    private void printBottomText() {
-
-    }
-
     private void blankCanvas() {
         for (int xpos = 0; xpos < display.getScreenX(); xpos++) {
             currentFrame.add(xpos, new ArrayList<>());
@@ -77,6 +77,16 @@ public class InteractiveEntityController extends EntityController implements IFr
                 currentFrame.get(xpos).add(ypos, new TextCharacter(' '));
             }
         }
+    }
+
+    private void drawBottomLog() {
+        if (relevantInteractionsLog.size() > 0) {
+            int ypos = display.getScreenY() - 1;
+            for (int xpos = 0; (xpos < display.getScreenX()) && (xpos < relevantInteractionsLog.getTop().length()); xpos++) {
+                currentFrame.get(xpos).set(ypos, new TextCharacter(relevantInteractionsLog.getTop().charAt(xpos)));
+            }
+        }
+
     }
 
     @Override
@@ -103,12 +113,6 @@ public class InteractiveEntityController extends EntityController implements IFr
                 pickupQueuedItems();
             }
         }
-    }
-
-
-
-    public void addRelevantInteraction(Interaction e) {
-        entity.getWorld().registerInteraction(e);
     }
 
     private volatile List<Item> itemDropQueue = null;
@@ -198,7 +202,9 @@ public class InteractiveEntityController extends EntityController implements IFr
         Iterator<Item> itemIterator = pickupItemQueue.iterator();
         while (itemIterator.hasNext()) {
             Item i = itemIterator.next();
-            Inventory.transferItem(i.getParent(), entity.body.getInventoryComponent().get(), i);
+            entity.sendInteraction(new PickupInteraction(entity, i.getParent().getParent()));
+            Inventory.transferItem(i.getParent
+                    (), entity.body.getInventoryComponent().get(), i);
         }
         nextMoveTick = entity.getWorld().getTick() + 5;
         pickupItemQueue = null;
@@ -236,7 +242,10 @@ public class InteractiveEntityController extends EntityController implements IFr
         return false;
     }
 
-
+    @Override
+    public void handleInteraction(Interaction i) {
+        relevantInteractionsLog.log(i);
+    }
 
 }
 

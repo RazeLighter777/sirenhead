@@ -32,6 +32,10 @@ import java.util.*;
 public final class Inventory {
 
 
+    public Entity getParent() {
+        return parent;
+    }
+
     private Entity parent;
     private ArrayList<Item> items = new ArrayList<>();
 

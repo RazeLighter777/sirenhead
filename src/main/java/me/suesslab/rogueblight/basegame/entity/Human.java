@@ -3,6 +3,11 @@ package me.suesslab.rogueblight.basegame.entity;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import me.suesslab.rogueblight.aspect.*;
+import me.suesslab.rogueblight.aspect.entity.IHumanoidComponent;
+import me.suesslab.rogueblight.aspect.entity.ILivingComponent;
+import me.suesslab.rogueblight.aspect.entity.IPhysicalComponent;
+import me.suesslab.rogueblight.aspect.entity.StatsComponent;
+import me.suesslab.rogueblight.basegame.lib.BasicHumanoid;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityInstance;
 import me.suesslab.rogueblight.entity.EntityType;
@@ -38,6 +43,7 @@ public class Human extends EntityType {
         defaultJson.add("name", getConfig().get("defaultHumanName"));
         defaultJson.add("health", getConfig().get("defaultHumanHealth"));
         defaultJson.add("stats", getConfig().get("defaultStats").getAsJsonObject());
+        defaultJson.add("humanoid", BasicHumanoid.generateJson(getConfig().get("defaultHeight").getAsDouble(), HumanoidPose.STANDING).getAsJsonObject());
         Entity result = new Entity(this, world, defaultJson);
         return result;
     }
@@ -45,6 +51,7 @@ public class Human extends EntityType {
     public class HumanInstance extends EntityInstance {
 
         private ILivingComponent humanLivingComponent;
+        private BasicHumanoid humanoidComponent;
         private Inventory i;
 
         private StatsComponent statsComponent;
@@ -53,6 +60,7 @@ public class Human extends EntityType {
             super(t);
             humanLivingComponent = new HumanLivingComponent(t);
             statsComponent = new StatsComponent(t);
+            humanoidComponent = new BasicHumanoid(t);
             i = new Inventory(getEntity(), getEntity().getData().get("inventory").getAsJsonArray());
         }
 
@@ -125,7 +133,7 @@ public class Human extends EntityType {
 
         @Override
         public Optional<IHumanoidComponent> getHumanoidComponent() {
-            return Optional.empty();
+            return Optional.of(humanoidComponent);
         }
 
         @Override

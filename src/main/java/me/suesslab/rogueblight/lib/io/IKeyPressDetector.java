@@ -1,4 +1,4 @@
-package me.suesslab.rogueblight.lib;
+package me.suesslab.rogueblight.lib.io;
 
 public interface IKeyPressDetector {
 

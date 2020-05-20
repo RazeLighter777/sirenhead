@@ -46,6 +46,16 @@ public class BrickTile extends TileType {
             return false;
         }
 
+        @Override
+        public boolean isAir() {
+            return false;
+        }
+
+        @Override
+        public double getFriction() {
+            return 0;
+        }
+
     }
 
 }

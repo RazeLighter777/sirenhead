@@ -16,8 +16,10 @@
  */
 package me.suesslab.rogueblight.interact;
 
+import java.util.List;
 import java.util.Optional;
 import me.suesslab.rogueblight.entity.Entity;
+import me.suesslab.rogueblight.item.Item;
 
 /**
  *
@@ -29,4 +31,10 @@ public abstract class Interaction {
      * @return A full sentence describing the interaction. No period and capitalize first letter of the sentence.
      */
     public abstract String toString();
+
+    //public abstract void interact();
+
+    public abstract List<Entity> getRelevantEntities();
+
+    //public abstract List<Item> getRelevantItems();
 }

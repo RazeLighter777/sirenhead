@@ -18,13 +18,11 @@ package me.suesslab.rogueblight.entity;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import me.suesslab.rogueblight.aspect.IComponent;
+import me.suesslab.rogueblight.interact.Interaction;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.world.IWorld;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -112,6 +110,20 @@ public final class Entity {
         }
         //Call for the individual instance to save its properties.
         body.save();
+    }
+
+    /**
+     * Function used to send interactions out into the world.
+     * @param i The interaction to be executed.
+     *
+     */
+    public final void sendInteraction(Interaction i) {
+        getWorld().registerInteraction(i);
+        for (Entity entity : i.getRelevantEntities()) {
+            entity.body.getController().handleInteraction(i);
+        }
+        //TODO: Add code maybe for items to specify their relevant objects.
+        //i.interact();
     }
 
 }

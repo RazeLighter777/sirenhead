@@ -4,6 +4,7 @@ import com.google.gson.JsonParser;
 import com.googlecode.lanterna.TextCharacter;
 import me.suesslab.rogueblight.SubsystemManager;
 import me.suesslab.rogueblight.entity.Entity;
+import me.suesslab.rogueblight.lib.io.KeyBoardController;
 import me.suesslab.rogueblight.uix.Display;
 import me.suesslab.rogueblight.uix.IFrameProvider;
 import me.suesslab.rogueblight.uix.InteractiveEntityController;
@@ -94,7 +95,7 @@ public class GameController implements  ISubsystem, IFrameProvider  {
             for (Entity e : world.getEntities().values()) {
                 if (e.getData().has("isLocalPlayer")) {
                     KeyBoardController controller = new KeyBoardController(display.getTerminal());
-                    display.setKeyBoardController(controller);
+                    display.setStrokeHandler(controller);
                     InteractiveEntityController playerController = new InteractiveEntityController(e, display, controller);
                     display.setFrameProvider(playerController);
                     e.body.setEntityController(playerController);

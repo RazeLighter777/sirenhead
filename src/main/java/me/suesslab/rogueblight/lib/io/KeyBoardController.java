@@ -1,18 +1,8 @@
-package me.suesslab.rogueblight.lib;
+package me.suesslab.rogueblight.lib.io;
 
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
-import me.suesslab.rogueblight.uix.Display;
-
-
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.IOException;
-import java.util.Optional;
-
-import static com.googlecode.lanterna.input.KeyType.ArrowDown;
-import static com.googlecode.lanterna.input.KeyType.ArrowUp;
 
 
 public class KeyBoardController implements IKeyPressDetector, IKeyStrokeHandler {

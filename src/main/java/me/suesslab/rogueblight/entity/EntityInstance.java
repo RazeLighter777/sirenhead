@@ -22,6 +22,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import me.suesslab.rogueblight.aspect.*;
+import me.suesslab.rogueblight.aspect.entity.IHumanoidComponent;
+import me.suesslab.rogueblight.aspect.entity.ILivingComponent;
+import me.suesslab.rogueblight.aspect.entity.IPhysicalComponent;
+import me.suesslab.rogueblight.aspect.entity.StatsComponent;
 import me.suesslab.rogueblight.interact.Interaction;
 import me.suesslab.rogueblight.item.Inventory;
 

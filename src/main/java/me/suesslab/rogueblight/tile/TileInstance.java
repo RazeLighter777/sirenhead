@@ -18,4 +18,8 @@ public abstract class TileInstance {
 
     public abstract boolean isSolid();
 
+    public abstract boolean isAir();
+
+    public abstract double getFriction();
+
 }

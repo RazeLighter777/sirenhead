@@ -15,23 +15,19 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
-import java.security.Key;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
-import com.googlecode.lanterna.terminal.swing.SwingTerminal;
-import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
-import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
 import me.suesslab.rogueblight.SubsystemManager;
 import me.suesslab.rogueblight.item.Item;
-import me.suesslab.rogueblight.lib.IKeyStrokeHandler;
+import me.suesslab.rogueblight.lib.io.IKeyStrokeHandler;
+import me.suesslab.rogueblight.lib.io.IKeyStrokeSupplier;
 import me.suesslab.rogueblight.lib.ISubsystem;
-import me.suesslab.rogueblight.lib.KeyBoardController;
+import me.suesslab.rogueblight.lib.io.TerminalPollingKeyStrokeSupplier;
 import me.suesslab.rogueblight.uix.gui.MultiItemSelectionWindow;
 import me.suesslab.rogueblight.uix.gui.MultiStringSelectionWindow;
 import me.suesslab.rogueblight.uix.gui.NotificationWindow;
@@ -44,6 +40,7 @@ public class Display implements ISubsystem {
 
 
     private SubsystemManager manager;
+    private IKeyStrokeSupplier strokeSupplier;
 
     public Terminal getTerminal() {
         return terminal;
@@ -55,7 +52,7 @@ public class Display implements ISubsystem {
     private IFrameProvider frameProvider;
     private final static Object displayLock = new Object();
     private Thread thread;
-    private IKeyStrokeHandler keyBoardController;
+    private IKeyStrokeHandler strokeHandler;
 
     public boolean isMenuOpen() {
         if (gui.getWindows().isEmpty()) {
@@ -71,8 +68,12 @@ public class Display implements ISubsystem {
         thread = new Thread(new ScreenRendererThread());
     }
 
-    public void setKeyBoardController(IKeyStrokeHandler keyBoardController) {
-        this.keyBoardController = keyBoardController;
+    public void setStrokeHandler(IKeyStrokeHandler strokeHandler) {
+        this.strokeHandler = strokeHandler;
+    }
+
+    public void setStrokeSupplier(IKeyStrokeSupplier strokeSupplier) {
+        this.strokeSupplier = strokeSupplier;
     }
 
     private Terminal createTerminal() throws IOException {
@@ -94,6 +95,7 @@ public class Display implements ISubsystem {
             screen = new TerminalScreen(terminal);
             screen.startScreen();
             gui = new MultiWindowTextGUI(screen);
+            strokeSupplier = new TerminalPollingKeyStrokeSupplier(terminal);
             //terminal.requestFocus();
             //terminal.setFocusable(true);
             //terminal.setFocusTraversalKeysEnabled(false);
@@ -151,13 +153,13 @@ public class Display implements ISubsystem {
                     } else {
                         frameProvider.getFrame().ifPresent(Display.this::drawFrame);
                     }
-                    if (keyBoardController != null) {
-                        KeyStroke stroke = terminal.pollInput();
+                    if (strokeHandler != null) {
+                        KeyStroke stroke = strokeSupplier.getKeyStroke();
                         if ((isMenuOpen()) && stroke!=null) {
                             gui.handleInput(stroke);
                         }
                         if (!isMenuOpen() && stroke!=null) {
-                            keyBoardController.handleInput(stroke);
+                            strokeHandler.handleInput(stroke);
                         }
                     }
                     screen.refresh();

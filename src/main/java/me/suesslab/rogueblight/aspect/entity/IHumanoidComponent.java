@@ -1,5 +1,7 @@
-package me.suesslab.rogueblight.aspect;
+package me.suesslab.rogueblight.aspect.entity;
 
+import me.suesslab.rogueblight.aspect.HumanoidPose;
+import me.suesslab.rogueblight.aspect.IComponent;
 import me.suesslab.rogueblight.interact.EntityEntityInteraction;
 import me.suesslab.rogueblight.interact.Interaction;
 

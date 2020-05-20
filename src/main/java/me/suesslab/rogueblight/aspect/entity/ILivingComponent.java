@@ -14,8 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package me.suesslab.rogueblight.aspect;
+package me.suesslab.rogueblight.aspect.entity;
 
+import me.suesslab.rogueblight.aspect.Alignment;
+import me.suesslab.rogueblight.aspect.Emotion;
+import me.suesslab.rogueblight.aspect.IComponent;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.interact.ThrownTooledInteraction;
 import me.suesslab.rogueblight.interact.TooledInteraction;

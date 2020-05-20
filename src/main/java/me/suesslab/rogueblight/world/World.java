@@ -10,6 +10,7 @@ import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.ItemType;
 import me.suesslab.rogueblight.lib.LevelManager;
 import me.suesslab.rogueblight.lib.Position;
+import me.suesslab.rogueblight.literary.StringLog;
 import me.suesslab.rogueblight.tile.Tile;
 import me.suesslab.rogueblight.tile.TileMap;
 import me.suesslab.rogueblight.tile.TileMapType;
@@ -32,14 +33,11 @@ public class World implements IWorld {
     private Map<UUID, Entity> entities;
     private TileMap map;
 
-
-
-    public Deque<Interaction> getInteractionLog() {
-        return interactionLog;
+    public StringLog getStringLog() {
+        return stringLog;
     }
 
-    //Warning: Queue must be pruned to prevent entities from not being collected by the garbage collector
-    private Deque<Interaction> interactionLog;
+    private StringLog stringLog;
 
     @Override
     public long getTick() {
@@ -63,7 +61,7 @@ public class World implements IWorld {
         this.levelManager = levelManager;
         levelManager.setWorld(this);
         entities = new ConcurrentHashMap<>();
-        interactionLog = new LinkedList<>();
+        stringLog = new StringLog(Integer.parseInt(ResourceBundle.getBundle("Game").getString("worldLogSize")));
     }
     public World(LevelManager levelManager, JsonObject worldData) {
         init(levelManager);
@@ -179,10 +177,7 @@ public class World implements IWorld {
 
     @Override
     public void registerInteraction(Interaction action) {
-        interactionLog.add(action);
-        if (interactionLog.size() > 100) {
-            interactionLog.removeFirst();
-        }
+        stringLog.log(action);
     }
 
     @Override

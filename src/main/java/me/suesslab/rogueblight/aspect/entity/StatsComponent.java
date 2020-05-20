@@ -1,7 +1,8 @@
-package me.suesslab.rogueblight.aspect;
+package me.suesslab.rogueblight.aspect.entity;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import me.suesslab.rogueblight.aspect.IComponent;
 import me.suesslab.rogueblight.entity.Entity;
 
 import java.util.HashMap;

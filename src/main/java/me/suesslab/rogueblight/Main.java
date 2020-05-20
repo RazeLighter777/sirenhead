@@ -1,18 +1,11 @@
 package me.suesslab.rogueblight;
 
 
-import com.google.gson.JsonParser;
 import me.suesslab.rogueblight.basegame.BaseGamePlugin;
-import me.suesslab.rogueblight.basegame.entity.Human;
-import me.suesslab.rogueblight.basegame.item.Stone;
-import me.suesslab.rogueblight.entity.Entity;
-import me.suesslab.rogueblight.item.ItemContainer;
 import me.suesslab.rogueblight.lib.*;
+import me.suesslab.rogueblight.lib.io.KeyBoardController;
 import me.suesslab.rogueblight.uix.Display;
-import me.suesslab.rogueblight.uix.InteractiveEntityController;
-import me.suesslab.rogueblight.world.World;
 
-import java.awt.*;
 import java.util.Arrays;
 
 public class Main {
@@ -27,7 +20,7 @@ public class Main {
         SubsystemManager partialManager = new SubsystemManager(Arrays.asList(registry, lvm, display, gameController));
         registry.addPlugin(new BaseGamePlugin());
         KeyBoardController controller = new KeyBoardController(display.getTerminal());
-        display.setKeyBoardController(controller);
+        display.setStrokeHandler(controller);
         gameController.startGame();
         partialManager.requestShutdown();
         /*Human human  = new Human("human");

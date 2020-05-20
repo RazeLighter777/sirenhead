@@ -1,5 +1,6 @@
-package me.suesslab.rogueblight.aspect;
+package me.suesslab.rogueblight.aspect.entity;
 
+import me.suesslab.rogueblight.aspect.IComponent;
 import me.suesslab.rogueblight.interact.*;
 
 import java.awt.*;
@@ -25,6 +26,7 @@ public interface IPhysicalComponent extends IComponent {
      * @return The mass of the object
      */
     public abstract double queryMass();
+
 
     //Interactions.
 
