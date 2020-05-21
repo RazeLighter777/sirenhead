@@ -3,6 +3,7 @@ package me.suesslab.rogueblight;
 
 import me.suesslab.rogueblight.basegame.BaseGamePlugin;
 import me.suesslab.rogueblight.lib.*;
+import me.suesslab.rogueblight.lib.audio.AudioManager;
 import me.suesslab.rogueblight.lib.io.KeyBoardController;
 import me.suesslab.rogueblight.uix.Display;
 
@@ -16,8 +17,9 @@ public class Main {
         Registry registry = new Registry();
         LevelManager lvm = new LevelManager(registry);
         Display display = new Display();
-        GameController gameController = new GameController(registry, lvm, display);
-        SubsystemManager partialManager = new SubsystemManager(Arrays.asList(registry, lvm, display, gameController));
+        AudioManager audioManager = new AudioManager();
+        GameController gameController = new GameController(registry, lvm, display, audioManager);
+        SubsystemManager partialManager = new SubsystemManager(Arrays.asList(registry, lvm, display, gameController, audioManager));
         registry.addPlugin(new BaseGamePlugin());
         KeyBoardController controller = new KeyBoardController(display.getTerminal());
         display.setStrokeHandler(controller);

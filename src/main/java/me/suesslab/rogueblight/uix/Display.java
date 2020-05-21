@@ -28,10 +28,7 @@ import me.suesslab.rogueblight.lib.io.IKeyStrokeHandler;
 import me.suesslab.rogueblight.lib.io.IKeyStrokeSupplier;
 import me.suesslab.rogueblight.lib.ISubsystem;
 import me.suesslab.rogueblight.lib.io.TerminalPollingKeyStrokeSupplier;
-import me.suesslab.rogueblight.uix.gui.MultiItemSelectionWindow;
-import me.suesslab.rogueblight.uix.gui.MultiStringSelectionWindow;
-import me.suesslab.rogueblight.uix.gui.NotificationWindow;
-import me.suesslab.rogueblight.uix.gui.StringSelectionWindow;
+import me.suesslab.rogueblight.uix.gui.*;
 
 /**
  * @author justin
@@ -106,25 +103,44 @@ public class Display implements ISubsystem {
     }
 
 
-    public void addMultipleStringSelectionWindow(String promptName, List<String> choices, MultiStringSelectionWindow.Callback callback) {
-        isMenuOpen = true;
-        gui.addWindow(new MultiStringSelectionWindow(promptName, choices, callback));
+    public void addMultipleStringSelectionWindow(String promptName, List<String> choices, MultiStringSelectionWindow.Callback callback, boolean blocking) {
+        MultiStringSelectionWindow window = new MultiStringSelectionWindow(promptName, choices, callback);
+        if (blocking) {
+            gui.addWindowAndWait(window);
+        } else {
+            isMenuOpen = true;
+            gui.addWindow(new MultiStringSelectionWindow(promptName, choices, callback));
+        }
     }
 
-    public void addStringSelectionWindow(String promptName, List<String> choices, StringSelectionWindow.Callback t) {
-        isMenuOpen = true;
-        gui.addWindow(new StringSelectionWindow(promptName, choices, t));
+    public void addStringSelectionWindow(String promptName, List<String> choices, StringSelectionWindow.Callback t, boolean blocking) {
+        StringSelectionWindow window = new StringSelectionWindow(promptName, choices, t);
+        if (blocking) {
+            gui.addWindowAndWait(window);
+        } else {
+            isMenuOpen = true;
+            gui.addWindow(window);
+        }
     }
 
-    public void addItemSelectionWindow(String promptName, List<Item> choices, MultiItemSelectionWindow.Callback callback) {
-        isMenuOpen = true;
-        //gui.setBlockingIO(false);
-        gui.addWindow(new MultiItemSelectionWindow(promptName, choices, callback));
+    public void addMessage(String header, String message, boolean blocking) {
+        NotificationWindow window = new NotificationWindow(header, message);
+        if (blocking) {
+            gui.addWindowAndWait(window);
+        } else {
+            isMenuOpen = true;
+            gui.addWindow(window);
+        }
     }
 
-    public void addNotificationWindow(String promptName, String message) {
-        isMenuOpen = true;
-        gui.addWindow(new NotificationWindow(promptName, message));
+    public void addItemSelectionWindow(String promptName, List<Item> choices, MultiItemSelectionWindow.Callback callback, boolean blocking) {
+        MultiItemSelectionWindow itemSelectionWindow = new MultiItemSelectionWindow(promptName, choices, callback);
+        if (blocking) {
+            gui.addWindowAndWait(itemSelectionWindow);
+        } else {
+            isMenuOpen = true;
+            gui.addWindow(new MultiItemSelectionWindow(promptName, choices, callback));
+        }
     }
 
     protected class ScreenRendererThread implements Runnable {
@@ -151,6 +167,7 @@ public class Display implements ISubsystem {
                     if (isMenuOpen()) {
                         gui.updateScreen();
                     } else {
+                        screen.setCursorPosition(null);
                         frameProvider.getFrame().ifPresent(Display.this::drawFrame);
                     }
                     if (strokeHandler != null) {
@@ -231,11 +248,19 @@ public class Display implements ISubsystem {
                 .setActionLabel("Open")
                 .build()
                 .showDialog(gui);
+        if (input==null) {
+            return "";
+        }
         return input.getAbsolutePath();
     }
 
-    public void blockingMessage(String promptName, String message) {
-        gui.addWindowAndWait(new NotificationWindow(promptName, message));
+    public void listMessage(String promptName, List<String> items, boolean blocking) {
+        if (blocking) {
+            gui.addWindowAndWait(new ListMessageWindow(promptName, items));
+        } else {
+            isMenuOpen = true;
+            gui.addWindow(new ListMessageWindow(promptName, items));
+        }
     }
     @Override
     public void stop() {

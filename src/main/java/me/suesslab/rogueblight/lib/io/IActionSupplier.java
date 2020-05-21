@@ -1,6 +1,6 @@
 package me.suesslab.rogueblight.lib.io;
 
-public interface IKeyPressDetector {
+public interface IActionSupplier {
 
     enum Direction {
         W,
@@ -19,6 +19,8 @@ public interface IKeyPressDetector {
     public boolean pickupKeyPressed();
 
     public boolean dropKeyPressed();
+
+    public boolean logKeyPressed();
 
 
 }

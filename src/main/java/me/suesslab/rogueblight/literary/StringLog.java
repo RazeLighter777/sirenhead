@@ -6,6 +6,11 @@ import java.util.ArrayList;
 
 public final class StringLog {
     private int size;
+
+    public ArrayList<String> getLog() {
+        return log;
+    }
+
     private ArrayList<String> log;
     public StringLog(int size) {
         this.size = size;

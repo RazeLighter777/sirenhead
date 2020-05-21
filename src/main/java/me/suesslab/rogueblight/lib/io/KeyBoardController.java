@@ -5,7 +5,7 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.Terminal;
 
 
-public class KeyBoardController implements IKeyPressDetector, IKeyStrokeHandler {
+public class KeyBoardController implements IActionSupplier, IKeyStrokeHandler {
 
 
     KeyStroke currentEvent;
@@ -42,7 +42,12 @@ public class KeyBoardController implements IKeyPressDetector, IKeyStrokeHandler 
 
     @Override
     public boolean dropKeyPressed() {
-        return isKeyPressed('e');
+        return isKeyPressed('d');
+    }
+
+    @Override
+    public boolean logKeyPressed() {
+        return isKeyPressed('/');
     }
 
     private boolean isKeyPressed(Character c) {

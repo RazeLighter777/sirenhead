@@ -11,7 +11,7 @@ import me.suesslab.rogueblight.interact.implementations.PickupInteraction;
 import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.Item;
 import me.suesslab.rogueblight.item.ItemContainer;
-import me.suesslab.rogueblight.lib.io.IKeyPressDetector;
+import me.suesslab.rogueblight.lib.io.IActionSupplier;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.literary.StringLog;
 import me.suesslab.rogueblight.tile.Tile;
@@ -24,10 +24,10 @@ public class InteractiveEntityController extends EntityController implements IFr
     private Display display;
     private SubsystemManager manager;
     private List<List<TextCharacter>> currentFrame;
-    private IKeyPressDetector controller;
+    private IActionSupplier controller;
     private long nextMoveTick = 0;
     private StringLog relevantInteractionsLog;
-    public InteractiveEntityController(Entity e, Display display, IKeyPressDetector controller) {
+    public InteractiveEntityController(Entity e, Display display, IActionSupplier controller) {
         super(e);
         this.controller = controller;
         this.display = display;
@@ -76,7 +76,7 @@ public class InteractiveEntityController extends EntityController implements IFr
         for (int xpos = 0; xpos < display.getScreenX(); xpos++) {
             currentFrame.add(xpos, new ArrayList<>());
             for (int ypos = 0; ypos < display.getScreenY(); ypos++) {
-                currentFrame.get(xpos).add(ypos, new TextCharacter(' '));
+                currentFrame.get(xpos).add(ypos, new TextCharacter(' ', TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
             }
         }
     }
@@ -104,6 +104,9 @@ public class InteractiveEntityController extends EntityController implements IFr
             }
             //If the drop menu key is pressed, open up the drop menu.
             if (openDropMenu()) {
+                return;
+            }
+            if (openLogMenu()) {
                 return;
             }
             //if there are items to drop drop them.
@@ -140,7 +143,7 @@ public class InteractiveEntityController extends EntityController implements IFr
     public boolean openDropMenu() {
         if ((controller.dropKeyPressed()) && (display.isMenuOpen() == false)) {
             Inventory i = entity.body.getInventoryComponent().get();
-            display.addItemSelectionWindow("Drop which items?", i.getItems(),this::dropInventoryItemCallback);
+            display.addItemSelectionWindow("Drop which items?", i.getItems(),this::dropInventoryItemCallback, false);
             return true;
         }
         return false;
@@ -184,7 +187,7 @@ public class InteractiveEntityController extends EntityController implements IFr
             default:
                 break;
         }
-        if (controller.getDirection() != IKeyPressDetector.Direction.NONE) {
+        if (controller.getDirection() != IActionSupplier.Direction.NONE) {
             //Set the nextMoveTick based upon the distance rule and the movement speed.
             nextMoveTick = entity.getWorld().getTick() + (long)(oldPos.distanceTo(entity.getPos()) * (double)(entity.body.getLivingComponent().isPresent() ? 100L / (long) entity.body.getLivingComponent().get().getMovementSpeed() : 1L));
             return true;
@@ -237,10 +240,18 @@ public class InteractiveEntityController extends EntityController implements IFr
                 pickupItemQueue = itemsAtPosition;
                 return true;
             } else {
-                display.addItemSelectionWindow("Pick up which items?", itemsAtPosition,this::pickupItemCallback);
+                display.addItemSelectionWindow("Pick up which items?", itemsAtPosition,this::pickupItemCallback, false);
                 return true;
             }
 
+        }
+        return false;
+    }
+
+    public boolean openLogMenu() {
+        if (controller.logKeyPressed() && !display.isMenuOpen()) {
+            display.listMessage("Event Log", relevantInteractionsLog.getLog(), false);
+            return true;
         }
         return false;
     }

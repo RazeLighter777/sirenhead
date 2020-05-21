@@ -4,6 +4,7 @@ import com.google.gson.JsonParser;
 import com.googlecode.lanterna.TextCharacter;
 import me.suesslab.rogueblight.SubsystemManager;
 import me.suesslab.rogueblight.entity.Entity;
+import me.suesslab.rogueblight.lib.audio.AudioManager;
 import me.suesslab.rogueblight.lib.io.KeyBoardController;
 import me.suesslab.rogueblight.uix.Display;
 import me.suesslab.rogueblight.uix.IFrameProvider;
@@ -19,11 +20,13 @@ public class GameController implements  ISubsystem, IFrameProvider  {
     private LevelManager levelManager;
     private Display display;
     private SubsystemManager manager;
+    private AudioManager audioManager;
 
-    public GameController(Registry registry, LevelManager lvm, Display display) {
+    public GameController(Registry registry, LevelManager lvm, Display display, AudioManager audioManager) {
         this.registry = registry;
         this.levelManager = lvm;
         this.display = display;
+        this.audioManager = audioManager;
     }
     @Override
     public void init(SubsystemManager manager) {
@@ -32,18 +35,13 @@ public class GameController implements  ISubsystem, IFrameProvider  {
     }
 
     public void startGame() {
-        display.addNotificationWindow("WELCOME", ResourceBundle.getBundle("Game").getString("MOTD"));
-        while (display.isMenuOpen()) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        audioManager.setBackgroundSound("mainmenu.MID");
+        display.addMessage("WELCOME", ResourceBundle.getBundle("Game").getString("MOTD"), true);
         choice = -2;
         while (true) {
+
             if (!display.isMenuOpen()) {
-                display.addStringSelectionWindow("Main Menu", new ArrayList<>(Arrays.asList("SELECT SAVE", "EXIT")), this::mainMenuCallBack);
+                display.addStringSelectionWindow(ResourceBundle.getBundle("Game").getString("Title"), new ArrayList<>(Arrays.asList("SELECT SAVE", "EXIT")), this::mainMenuCallBack, false);
             } else {
                 if (newChoice) {
                     if (!executeChoice()) {
@@ -84,12 +82,13 @@ public class GameController implements  ISubsystem, IFrameProvider  {
         String fileName  = display.fileSelectionDialog("Load your game", "Select a world file (extension is .json)");
         File file = new File(fileName);
         if (!file.exists() ||  !fileName.endsWith(".json")) {
-            display.blockingMessage("EAT MY ASS", "That file doesn't have the right extension. You need a .json");
+            display.addMessage("EAT MY ASS", "That file doesn't have the right extension. You need a .json", true);
         }
         try {
             FileReader fileReader = new FileReader(file);
             World world = new World(levelManager, JsonParser.parseReader(fileReader).getAsJsonObject());
-            display.blockingMessage("Great Victory!", "World loaded successfully!");
+            display.addMessage("Great Victory!", "World loaded successfully!", true);
+            audioManager.muteBackgroundSounds();
             //Attach to the first local player in the save.
             Entity player = null;
             for (Entity e : world.getEntities().values()) {
@@ -119,8 +118,7 @@ public class GameController implements  ISubsystem, IFrameProvider  {
                 }
             }
             //display.setFrameProvider(this);
-        } catch (FileNotFoundException e) {
-            display.blockingMessage("GLITCH", "FileNotFoundException");
+        } catch (FileNotFoundException e) {;
             return;
         } catch (IOException e) {
             e.printStackTrace();
