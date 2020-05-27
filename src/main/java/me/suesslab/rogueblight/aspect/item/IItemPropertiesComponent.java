@@ -4,5 +4,4 @@ import me.suesslab.rogueblight.aspect.IComponent;
 
 public interface IItemPropertiesComponent extends IComponent {
 
-
 }

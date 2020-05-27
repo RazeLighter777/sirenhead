@@ -25,7 +25,7 @@ public class MomentumSubjectPhysicalObject implements IPhysicalComponent {
     }
 
     private Vector momentum;
-    private Entity entity;
+    protected Entity entity;
     //NOTE: Check for null.
     private Entity thrower;
 

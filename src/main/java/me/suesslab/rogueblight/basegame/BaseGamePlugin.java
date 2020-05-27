@@ -5,7 +5,7 @@ import me.suesslab.rogueblight.basegame.item.Stone;
 import me.suesslab.rogueblight.basegame.map.FlatBrickMapType;
 import me.suesslab.rogueblight.basegame.tile.BrickTile;
 import me.suesslab.rogueblight.entity.EntityType;
-import me.suesslab.rogueblight.item.ItemContainer;
+import me.suesslab.rogueblight.item.itemcontainer.ItemContainer;
 import me.suesslab.rogueblight.item.ItemType;
 import me.suesslab.rogueblight.lib.IPlugin;
 import me.suesslab.rogueblight.tile.TileMapType;

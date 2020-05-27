@@ -11,7 +11,7 @@ import me.suesslab.rogueblight.interact.implementations.PickupInteraction;
 import me.suesslab.rogueblight.interact.implementations.ThrowLaunchInteraction;
 import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.Item;
-import me.suesslab.rogueblight.item.ItemContainer;
+import me.suesslab.rogueblight.item.itemcontainer.ItemContainer;
 import me.suesslab.rogueblight.lib.Vector;
 import me.suesslab.rogueblight.lib.io.IActionSupplier;
 import me.suesslab.rogueblight.lib.Position;

@@ -3,8 +3,6 @@ package me.suesslab.rogueblight.basegame;
 import com.google.gson.JsonParser;
 import junit.framework.TestCase;
 import me.suesslab.rogueblight.SubsystemManager;
-import me.suesslab.rogueblight.basegame.item.Stone;
-import me.suesslab.rogueblight.item.ItemContainer;
 import me.suesslab.rogueblight.lib.LevelManager;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.lib.Registry;

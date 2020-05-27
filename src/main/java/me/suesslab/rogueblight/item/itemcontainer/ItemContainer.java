@@ -1,4 +1,4 @@
-package me.suesslab.rogueblight.item;
+package me.suesslab.rogueblight.item.itemcontainer;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -6,11 +6,16 @@ import me.suesslab.rogueblight.aspect.entity.IHumanoidComponent;
 import me.suesslab.rogueblight.aspect.entity.IPhysicalComponent;
 import me.suesslab.rogueblight.aspect.entity.StatsComponent;
 import me.suesslab.rogueblight.basegame.item.Stone;
+import me.suesslab.rogueblight.basegame.lib.MomentumSubjectPhysicalObject;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.entity.EntityType;
 import me.suesslab.rogueblight.entity.EntityInstance;
 import me.suesslab.rogueblight.aspect.entity.ILivingComponent;
+import me.suesslab.rogueblight.item.Inventory;
+import me.suesslab.rogueblight.item.Item;
+import me.suesslab.rogueblight.item.ItemType;
 import me.suesslab.rogueblight.lib.Position;
+import me.suesslab.rogueblight.lib.Vector;
 import me.suesslab.rogueblight.world.IWorld;
 
 import java.util.Optional;
@@ -43,6 +48,7 @@ public class ItemContainer extends EntityType {
         defaultJson.addProperty("uuid", UUID.randomUUID().toString());
         defaultJson.add("position", pos.getJSON());
         defaultJson.add("inventory", new JsonArray());
+        defaultJson.add("physical", MomentumSubjectPhysicalObject.generateJson(new Vector(0,0)));
         Entity result = null;
         Optional<Item> op = i.getItemByUUID(itemId);
         if (op.isPresent()) {
@@ -69,10 +75,12 @@ public class ItemContainer extends EntityType {
     public static class ItemContainerBehavior extends EntityInstance {
 
         private Inventory i;
+        private ItemContainerPhysicalComponent physicalComponent;
 
         public ItemContainerBehavior(Entity t) {
             super(t);
             i = new Inventory(t, t.getData().get("inventory").getAsJsonArray());
+            physicalComponent = new ItemContainerPhysicalComponent(getEntity(), UUID.randomUUID());
         }
 
         @Override
@@ -109,7 +117,9 @@ public class ItemContainer extends EntityType {
 
         @Override
         public Optional<IPhysicalComponent> getPhysicalComponent() {
-            return Optional.empty();
+            //TODO: doesn't need to set contained item every turn. Also item might not be in container yet.
+            physicalComponent.setContainedItem(i.getItemUUIDs().get(0));
+            return Optional.of(physicalComponent);
         }
 
         @Override
