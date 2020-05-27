@@ -2,7 +2,7 @@ package me.suesslab.rogueblight.lib;
 
 import com.google.gson.JsonArray;
 
-public final class Position {
+public class Position {
     private int x;
     private int y;
 

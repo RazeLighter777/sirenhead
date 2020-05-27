@@ -8,9 +8,11 @@ import me.suesslab.rogueblight.entity.EntityController;
 import me.suesslab.rogueblight.interact.Interaction;
 import me.suesslab.rogueblight.interact.implementations.DropInteraction;
 import me.suesslab.rogueblight.interact.implementations.PickupInteraction;
+import me.suesslab.rogueblight.interact.implementations.ThrowLaunchInteraction;
 import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.Item;
 import me.suesslab.rogueblight.item.ItemContainer;
+import me.suesslab.rogueblight.lib.Vector;
 import me.suesslab.rogueblight.lib.io.IActionSupplier;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.literary.StringLog;
@@ -27,6 +29,7 @@ public class InteractiveEntityController extends EntityController implements IFr
     private IActionSupplier controller;
     private long nextMoveTick = 0;
     private StringLog relevantInteractionsLog;
+    private boolean freeCursorMode = false;
     public InteractiveEntityController(Entity e, Display display, IActionSupplier controller) {
         super(e);
         this.controller = controller;
@@ -67,7 +70,6 @@ public class InteractiveEntityController extends EntityController implements IFr
                 if (absolutePosition.equals(entity.getPos())) {
                     currentFrame.get(xpos).set(ypos, new TextCharacter('@'));
                 }
-
             }
         }
     }
@@ -109,23 +111,34 @@ public class InteractiveEntityController extends EntityController implements IFr
             if (openLogMenu()) {
                 return;
             }
+            if (openThrowItemMenu()) {
+                return ;
+            }
             //if there are items to drop drop them.
             if (itemDropQueue != null) {
                 dropQueuedItems();
             }
+
             //if there are items to pickup pick them up
             if (pickupItemQueue != null) {
                 pickupQueuedItems();
+            }
+            //if there are items to throw, throw them.
+            if (throwItemQueue != null) {
+                throwQueuedItem();
             }
         }
     }
 
     private volatile List<Item> itemDropQueue = null;
-    //Item Drop code.
-    private void dropItem(UUID item) {
+    //Item Drop code. Returns the entity as an item container on the ground
+    private Entity dropItem(UUID item) {
         Inventory inv = entity.body.getInventoryComponent().get();
         ItemContainer itemContainer = new ItemContainer();
-        entity.getWorld().createEntityInWorld(itemContainer.create(inv,item,entity.getWorld(),entity.getPos()));
+        Entity result = itemContainer.create(inv,item,entity.getWorld(),entity.getPos());
+        entity.sendInteraction(new DropInteraction(entity, result.body.getInventoryComponent().get().getItemByUUID(item).get()));
+        entity.getWorld().createEntityInWorld(result);
+        return result;
     }
     private void dropInventoryItemCallback(List<Item> drops) {
         itemDropQueue = drops;
@@ -135,7 +148,6 @@ public class InteractiveEntityController extends EntityController implements IFr
         while (itemIterator.hasNext()) {
             Item i = itemIterator.next();
             dropItem(i.getUUID());
-            entity.sendInteraction(new DropInteraction(entity, i));
             nextMoveTick = entity.getWorld().getTick() + 5;
         }
         itemDropQueue = null;
@@ -198,9 +210,6 @@ public class InteractiveEntityController extends EntityController implements IFr
     //Item pickup code
     //Item Drop code.
     private volatile List<Item> pickupItemQueue = null;
-    private void pickupItem(Entity container) {
-        Inventory inv = entity.body.getInventoryComponent().get();
-    }
     private void pickupItemCallback(List<Item> pickups) {
         pickupItemQueue = pickups;
     }
@@ -261,5 +270,32 @@ public class InteractiveEntityController extends EntityController implements IFr
         relevantInteractionsLog.log(i);
     }
 
+
+    //throw item code
+    private volatile Item throwItemQueue = null;
+    private void throwItem(UUID item, Vector force) {
+        Entity thrownItem = dropItem(item);
+        ThrowLaunchInteraction interaction = new ThrowLaunchInteraction(entity, thrownItem);
+        entity.sendInteraction(interaction);
+        thrownItem.body.getPhysicalComponent().ifPresent(component -> component.impartForce(interaction, force));
+    }
+    private void throwItemCallback(Optional<Item> throwableItem) {
+        throwableItem.ifPresent(item -> throwItemQueue=item);
+    }
+    private void throwQueuedItem() {
+        if (throwItemQueue != null) {
+            //Calculate strength and throw the item.
+            throwItem(throwItemQueue.getUUID(), entity.body.getLivingComponent().isPresent() ? new Vector(Math.cos(entity.body.getLivingComponent().get().getOrientationAngle()), Math.sin(entity.body.getLivingComponent().get().getOrientationAngle())).multiply(entity.body.getLivingComponent().get().getThrowingStrength()) : new Vector(1,1));
+        }
+        throwItemQueue = null;
+    }
+    private boolean openThrowItemMenu() {
+        if (!display.isMenuOpen() && controller.throwKeyPressed() && entity.body.getInventoryComponent().isPresent()) {
+            Inventory i = entity.body.getInventoryComponent().get();
+            display.addItemSelectionWindow("Throw which item?", "Select item", i.getItems(), this::throwItemCallback, false);
+            return true;
+        }
+        return false;
+    }
 }
 

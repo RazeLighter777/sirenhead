@@ -51,9 +51,13 @@ public class BrickTile extends TileType {
             return false;
         }
 
+        /**
+         * Gets the friction of the tile
+         * @return a number between 0 and 1 where 0 is perfectly sticky and 1 is perfectly smooth.
+         */
         @Override
         public double getFriction() {
-            return 0;
+            return 0.7;
         }
 
     }

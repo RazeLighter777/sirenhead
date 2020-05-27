@@ -36,4 +36,6 @@ public interface IWorld {
     public abstract long getTick();
 
     public abstract boolean removeEntity(UUID uuid);
+
+    public abstract boolean isOccupied(Position pos);
 }

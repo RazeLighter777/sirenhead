@@ -18,6 +18,7 @@ package me.suesslab.rogueblight.entity;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import me.suesslab.rogueblight.aspect.IComponent;
 import me.suesslab.rogueblight.interact.Interaction;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.world.IWorld;
@@ -93,6 +94,7 @@ public final class Entity {
             body.getInventoryComponent().get().update();
         }
         body.getController().update();
+        body.getComponents().forEach(IComponent::update);
     }
 
     public final void save() {

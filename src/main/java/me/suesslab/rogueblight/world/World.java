@@ -55,6 +55,28 @@ public class World implements IWorld {
         return false;
     }
 
+    @Override
+    public boolean isOccupied(Position pos) {
+        //Check if the tile exits
+        if (getTileAtPosition(pos).isPresent()) {
+            //Check if the tile is solid
+            if (getTileAtPosition(pos).get().body.isSolid()) {
+                return true;
+            }
+            //Make sure an occupying entity is not in the position
+            for (Entity e : getEntitiesAtPosition(pos)) {
+                //Check if the entity is physical
+                if (e.body.getPhysicalComponent().isPresent()) {
+                    //Check if the entity occupies space
+                    if (e.body.getPhysicalComponent().get().occupiesTile()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private long tick;
 
     private void init(LevelManager levelManager) {

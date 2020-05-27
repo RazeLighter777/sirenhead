@@ -48,9 +48,13 @@ public final class StatsComponent implements IComponent {
         statsObject.addProperty("INTEL", getStat(Stat.INTEL));
     }
 
+    @Override
+    public void update() {
+
+    }
 
 
-    enum Stat {
+    public enum Stat {
         STRENGTH,
         RESISTANCE,
         AGILITY,

@@ -1,5 +1,7 @@
 package me.suesslab.rogueblight.lib.io;
 
+import com.googlecode.lanterna.TerminalPosition;
+
 public interface IActionSupplier {
 
     enum Direction {
@@ -21,6 +23,10 @@ public interface IActionSupplier {
     public boolean dropKeyPressed();
 
     public boolean logKeyPressed();
+
+    public boolean throwKeyPressed();
+
+    public boolean freeCursorKeyPressed();
 
 
 }

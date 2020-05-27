@@ -53,7 +53,7 @@ public abstract class EntityInstance {
 
     protected abstract String getQualifiedName();
 
-    protected final Entity getEntity() {
+    public final Entity getEntity() {
         return instance;
     }
 

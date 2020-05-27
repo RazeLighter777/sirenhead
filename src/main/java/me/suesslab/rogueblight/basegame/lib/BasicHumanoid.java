@@ -3,6 +3,7 @@ package me.suesslab.rogueblight.basegame.lib;
 import com.google.gson.JsonObject;
 import me.suesslab.rogueblight.aspect.HumanoidPose;
 import me.suesslab.rogueblight.aspect.entity.IHumanoidComponent;
+import me.suesslab.rogueblight.aspect.entity.StatsComponent;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.interact.EntityEntityInteraction;
 import me.suesslab.rogueblight.interact.Interaction;
@@ -56,6 +57,11 @@ public class BasicHumanoid implements IHumanoidComponent {
         JsonObject localData  = parent.getData().getAsJsonObject("humanoid");
         localData.addProperty("pose", getPose().toString());
         localData.addProperty("height", height);
+    }
+
+    @Override
+    public void update() {
+
     }
 
     public void setPose(HumanoidPose pose) {

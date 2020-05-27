@@ -262,6 +262,15 @@ public class Display implements ISubsystem {
             gui.addWindow(new ListMessageWindow(promptName, items));
         }
     }
+
+    public void addItemSelectionWindow(String promptName, String message, List<Item> items, ItemSelectionWindow.Callback t, boolean blocking) {
+        if (blocking) {
+            gui.addWindowAndWait(new ItemSelectionWindow(promptName, message, items, t));
+        } else {
+            isMenuOpen = true;
+            gui.addWindow(new ItemSelectionWindow(promptName, message, items, t));
+        }
+    }
     @Override
     public void stop() {
         //TODO: Remove deprecated method.

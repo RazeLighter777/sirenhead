@@ -87,7 +87,7 @@ public class GameController implements  ISubsystem, IFrameProvider  {
         try {
             FileReader fileReader = new FileReader(file);
             World world = new World(levelManager, JsonParser.parseReader(fileReader).getAsJsonObject());
-            display.addMessage("Great Victory!", "World loaded successfully!", true);
+            display.addMessage("Great Victory!", "Once upon a time, angels ruled the earth. \nThose destined as traitors were cast down to earth. You inhabit the remnants.", true);
             audioManager.muteBackgroundSounds();
             //Attach to the first local player in the save.
             Entity player = null;
@@ -109,6 +109,7 @@ public class GameController implements  ISubsystem, IFrameProvider  {
                 if (!world.getEntities().containsValue(player)) {
                     break;
                 }
+                System.out.println(player.getPos().getJSON().toString());
                 if (world.getTick() % 1000 == 0) {
                     manager.getLogger().info("Saving world");
                     FileWriter writer = new FileWriter(file, false);

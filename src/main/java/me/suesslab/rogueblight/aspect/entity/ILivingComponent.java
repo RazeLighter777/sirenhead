@@ -39,5 +39,14 @@ public interface ILivingComponent extends IComponent {
 
     public int getMovementSpeed();
 
+    public double getThrowingStrength();
+
+
+    /**
+     * @return A number representing the angle the entity is facing
+     */
+    public double getOrientationAngle();
+
+
     
 }

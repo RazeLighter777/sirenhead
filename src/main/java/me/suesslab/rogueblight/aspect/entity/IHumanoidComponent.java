@@ -11,6 +11,7 @@ public interface IHumanoidComponent extends IComponent {
 
     public double getHeight();
 
+
     //Interactions
     public Interaction speak(EntityEntityInteraction t, String speech);
 }

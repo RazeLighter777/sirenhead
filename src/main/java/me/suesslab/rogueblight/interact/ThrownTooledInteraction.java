@@ -3,16 +3,15 @@ package me.suesslab.rogueblight.interact;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.item.Item;
 
-public abstract class ThrownTooledInteraction  extends TooledInteraction {
+public abstract class ThrownTooledInteraction  extends ThrownEntityInteraction {
+    private Item tool;
 
-    public Entity getThrower() {
-        return thrower;
+    private Item getTool() {
+        return tool;
     }
 
-    private Entity thrower;
-
-    public ThrownTooledInteraction(Entity thrower, Entity origin, Entity target, Item tool) {
-        super(origin, target, tool);
-        this.thrower = thrower;
+    public ThrownTooledInteraction(Entity origin, Entity target, Entity projectile, Item tool) {
+        super(origin, target, projectile);
+        this.tool = tool;
     }
 }

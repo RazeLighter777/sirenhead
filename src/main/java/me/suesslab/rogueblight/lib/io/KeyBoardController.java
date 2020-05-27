@@ -1,7 +1,9 @@
 package me.suesslab.rogueblight.lib.io;
 
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.input.MouseAction;
 import com.googlecode.lanterna.terminal.Terminal;
 
 
@@ -48,6 +50,16 @@ public class KeyBoardController implements IActionSupplier, IKeyStrokeHandler {
     @Override
     public boolean logKeyPressed() {
         return isKeyPressed('/');
+    }
+
+    @Override
+    public boolean throwKeyPressed() {
+        return isKeyPressed('t');
+    }
+
+    @Override
+    public boolean freeCursorKeyPressed() {
+        return isKeyPressed(' ');
     }
 
     private boolean isKeyPressed(Character c) {
