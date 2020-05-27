@@ -132,7 +132,7 @@ public class MomentumSubjectPhysicalObject implements IPhysicalComponent {
             if (entity.getWorld().isOccupied(newPos)) {
                 //Impart momentum onto tile occupying entities.
                 for (Entity e : entity.getWorld().getEntitiesAtPosition(newPos)) {
-                    //Skip self
+                    //TODO: Make it so entities collide with tiles in the way.
                     if (e == entity) {
                         continue;
                     }
@@ -145,6 +145,7 @@ public class MomentumSubjectPhysicalObject implements IPhysicalComponent {
                     }
                 }
             } else {
+
                 //If the tile is unoccupied, move there.
                 entity.getPos().setX(newPos.getX());
                 entity.getPos().setY(newPos.getY());

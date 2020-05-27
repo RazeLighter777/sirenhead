@@ -117,8 +117,10 @@ public class ItemContainer extends EntityType {
 
         @Override
         public Optional<IPhysicalComponent> getPhysicalComponent() {
-            //TODO: doesn't need to set contained item every turn. Also item might not be in container yet.
-            physicalComponent.setContainedItem(i.getItemUUIDs().get(0));
+            //XXX doesn't need to set contained item every turn.
+            if (!i.getItemUUIDs().isEmpty()) {
+                physicalComponent.setContainedItem(i.getItemUUIDs().get(0));
+            }
             return Optional.of(physicalComponent);
         }
 
