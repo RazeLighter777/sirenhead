@@ -59,7 +59,7 @@ public class KeyBoardController implements IActionSupplier, IKeyStrokeHandler {
 
     @Override
     public boolean freeCursorKeyPressed() {
-        return isKeyPressed(' ');
+        return isKeyPressed('f');
     }
 
     private boolean isKeyPressed(Character c) {

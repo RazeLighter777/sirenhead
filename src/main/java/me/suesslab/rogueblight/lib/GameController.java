@@ -109,7 +109,6 @@ public class GameController implements  ISubsystem, IFrameProvider  {
                 if (!world.getEntities().containsValue(player)) {
                     break;
                 }
-                System.out.println(player.getPos().getJSON().toString());
                 if (world.getTick() % 1000 == 0) {
                     manager.getLogger().info("Saving world");
                     FileWriter writer = new FileWriter(file, false);

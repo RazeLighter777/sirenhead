@@ -30,6 +30,7 @@ public class InteractiveEntityController extends EntityController implements IFr
     private long nextMoveTick = 0;
     private StringLog relevantInteractionsLog;
     private boolean freeCursorMode = false;
+    private Vector cursorPosition = new Vector(0,0);
     public InteractiveEntityController(Entity e, Display display, IActionSupplier controller) {
         super(e);
         this.controller = controller;
@@ -70,6 +71,10 @@ public class InteractiveEntityController extends EntityController implements IFr
                 if (absolutePosition.equals(entity.getPos())) {
                     currentFrame.get(xpos).set(ypos, new TextCharacter('@'));
                 }
+                System.out.println(new Position((int)((display.getScreenX()-1) * cursorPosition.getX()), (int)((display.getScreenY()-1) * cursorPosition.getY())).getJSON().toString());
+                if (new Position(xpos, ypos).equals(new Position((int)((display.getScreenX()-1) * cursorPosition.getX()), (int)((display.getScreenY()-1) * cursorPosition.getY())))) {
+                    currentFrame.get(xpos).set(ypos, currentFrame.get(xpos).get(ypos).withBackgroundColor(TextColor.ANSI.YELLOW));
+                }
             }
         }
     }
@@ -97,9 +102,21 @@ public class InteractiveEntityController extends EntityController implements IFr
     public void update() {
         if (entity.getWorld().getTick() >= nextMoveTick) {
             //if a movement key is pressed, move.
-            if (updateMovement()) {
-                return;
+            if (!freeCursorMode) {
+                if (updateMovement()) {
+                    return;
+                }
+            } else {
+                if (updateCursorMovement()) {
+                    return;
+                }
             }
+            //If the free cursor key is pressed, free the cursor.
+            if (controller.freeCursorKeyPressed()) {
+                freeCursorMode = !freeCursorMode;
+                System.out.println("Free cursor mode: " + freeCursorMode);
+            }
+
             //if the pickup item key is pressed, pickup the item.
             if (openPickupMenu()) {
                 return;
@@ -128,6 +145,38 @@ public class InteractiveEntityController extends EntityController implements IFr
                 throwQueuedItem();
             }
         }
+    }
+
+    private boolean updateCursorMovement() {
+        //Make sure the cursor position is between 0 and 1
+        if (cursorPosition.getY() > 1d) {
+            cursorPosition.setY(1d);
+        }
+        if (cursorPosition.getX() > 1d) {
+            cursorPosition.setX(1d);
+        }
+        if (cursorPosition.getX() < 0d) {
+            cursorPosition.setX(0d);
+        }
+        if (cursorPosition.getY() < 0d) {
+            cursorPosition.setY(0d);
+        }
+        //Alter the cursor position based on the values here
+        switch(controller.getDirection()) {
+            case N:
+                cursorPosition.add(new Vector(0,-.1d));
+                return true;
+            case S:
+                cursorPosition.add(new Vector(0, .1d));
+                return true;
+            case W:
+                cursorPosition.add(new Vector(-.1d, 0));
+                return true;
+            case E:
+                cursorPosition.add(new Vector(.1d, 0));
+                return true;
+        }
+        return false;
     }
 
     private volatile List<Item> itemDropQueue = null;
