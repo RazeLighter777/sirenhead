@@ -5,15 +5,6 @@
  */
 package me.suesslab.rogueblight.uix;
 
-import com.googlecode.lanterna.TextCharacter;
-import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.screen.TerminalScreen;
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +13,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
+import com.googlecode.lanterna.TextCharacter;
 import me.suesslab.rogueblight.SubsystemManager;
 import me.suesslab.rogueblight.item.Item;
 import me.suesslab.rogueblight.lib.io.IKeyStrokeHandler;
@@ -29,6 +21,12 @@ import me.suesslab.rogueblight.lib.io.IKeyStrokeSupplier;
 import me.suesslab.rogueblight.lib.ISubsystem;
 import me.suesslab.rogueblight.lib.io.TerminalPollingKeyStrokeSupplier;
 import me.suesslab.rogueblight.uix.gui.*;
+import org.hexworks.zircon.api.CP437TilesetResources;
+import org.hexworks.zircon.api.SwingApplications;
+import org.hexworks.zircon.api.application.AppConfig;
+import org.hexworks.zircon.api.grid.TileGrid;
+import org.hexworks.zircon.api.screen.Screen;
+import org.hexworks.zircon.internal.resource.CP437TilesetResource;
 
 /**
  * @author justin
@@ -43,6 +41,9 @@ public class Display implements ISubsystem {
     private final static Object displayLock = new Object();
     private Thread thread;
     private IKeyStrokeHandler strokeHandler;
+
+    TileGrid tileGrid;
+    Screen screen;
 
 
 
@@ -68,6 +69,7 @@ public class Display implements ISubsystem {
     @Override
     public void init(SubsystemManager manager) {
         this.manager = manager;
+        tileGrid = SwingApplications.startTileGrid(AppConfig.newBuilder().withSize(60, 30).withDefaultTileset(CP437TilesetResources.bisasam16x16()).build());
         thread.start();
     }
 
@@ -98,6 +100,7 @@ public class Display implements ISubsystem {
 
         public void run() {
             while (running) {
+                screen.display();
             }
 
         }
@@ -111,7 +114,7 @@ public class Display implements ISubsystem {
     public void closeGui() {
     }
     protected void drawFrame(List<List<TextCharacter>> frame) {
-        
+
     }
 
     public int getRefreshRate() {

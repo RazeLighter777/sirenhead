@@ -21,8 +21,8 @@ public class Main {
         GameController gameController = new GameController(registry, lvm, display, audioManager);
         SubsystemManager partialManager = new SubsystemManager(Arrays.asList(registry, lvm, display, gameController, audioManager));
         registry.addPlugin(new BaseGamePlugin());
-        KeyBoardController controller = new KeyBoardController(display.getTerminal());
-        display.setStrokeHandler(controller);
+        //KeyBoardController controller = new KeyBoardController(display.getTerminal());
+        //display.setStrokeHandler(controller);
         gameController.startGame();
         partialManager.requestShutdown();
         /*Human human  = new Human("human");

@@ -93,11 +93,11 @@ public class GameController implements  ISubsystem, IFrameProvider  {
             Entity player = null;
             for (Entity e : world.getEntities().values()) {
                 if (e.getData().has("isLocalPlayer")) {
-                    KeyBoardController controller = new KeyBoardController(display.getTerminal());
-                    display.setStrokeHandler(controller);
-                    InteractiveEntityController playerController = new InteractiveEntityController(e, display, controller);
-                    display.setFrameProvider(playerController);
-                    e.body.setEntityController(playerController);
+                    //KeyBoardController controller = new KeyBoardController(display.getTerminal());
+                    //display.setStrokeHandler(controller);
+                    //InteractiveEntityController playerController = new InteractiveEntityController(e, display, controller);
+                    //display.setFrameProvider(playerController);
+                    //e.body.setEntityController(playerController);
                     player = e;
                     break;
                 }

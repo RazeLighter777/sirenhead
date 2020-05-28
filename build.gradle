@@ -37,7 +37,9 @@ repositories {
     // You may define additional repositories, or even remove "mavenCentral()".
     // Read more about repositories here:
     //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven {
+        url "https://kotlin.bintray.com/kotlinx"
+    }
 }
 
 dependencies {
