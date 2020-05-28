@@ -111,29 +111,7 @@ public class Display implements ISubsystem {
     public void closeGui() {
     }
     protected void drawFrame(List<List<TextCharacter>> frame) {
-        synchronized (displayLock) {
-            //Drop the frame if it doesn't fit the screen
-            if (frame.size() != getScreenX()) {
-                manager.getLogger().warning("Frame dropped, out of x bounds.");
-                return;
-            }
-            if (frame.get(0).size() != getScreenY()) {
-                manager.getLogger().warning("Frame dropped, out of y bounds");
-                return;
-            }
-            for (int xpos = 0; xpos < getScreenX(); xpos++) {
-                for (int ypos = 0; ypos < getScreenY(); ypos++) {
-                    TextCharacter result = new TextCharacter(' ');
-                    try {
-                        result = frame.get(xpos).get(ypos);
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                        manager.getLogger().warning("Tried to draw out of bounds character on " + xpos + " " + ypos);
-                    }
-                    screen.setCharacter(xpos, ypos, result);
-
-                }
-            }
-        }
+        
     }
 
     public int getRefreshRate() {
@@ -150,16 +128,7 @@ public class Display implements ISubsystem {
     }
 
     public String fileSelectionDialog(String title, String desc) {
-        File input = new FileDialogBuilder()
-                .setTitle(title)
-                .setDescription(desc)
-                .setActionLabel("Open")
-                .build()
-                .showDialog(gui);
-        if (input==null) {
-            return "";
-        }
-        return input.getAbsolutePath();
+        return "";
     }
 
     public void listMessage(String promptName, List<String> items, boolean blocking) {
