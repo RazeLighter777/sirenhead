@@ -39,30 +39,20 @@ public class Display implements ISubsystem {
     private SubsystemManager manager;
     private IKeyStrokeSupplier strokeSupplier;
 
-    public Terminal getTerminal() {
-        return terminal;
-    }
-
-    private Terminal terminal;
-    private Screen screen;
-    private MultiWindowTextGUI gui;
     private IFrameProvider frameProvider;
     private final static Object displayLock = new Object();
     private Thread thread;
     private IKeyStrokeHandler strokeHandler;
 
+
+
     public boolean isMenuOpen() {
-        if (gui.getWindows().isEmpty()) {
-            isMenuOpen = false;
-        }
-        return isMenuOpen;
+        return false;
     }
 
     private volatile boolean isMenuOpen = false;
 
     public Display() {
-        setFrameProvider(new NullFrameProvider());
-        thread = new Thread(new ScreenRendererThread());
     }
 
     public void setStrokeHandler(IKeyStrokeHandler strokeHandler) {
@@ -73,74 +63,29 @@ public class Display implements ISubsystem {
         this.strokeSupplier = strokeSupplier;
     }
 
-    private Terminal createTerminal() throws IOException {
-        DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
-        Terminal term = defaultTerminalFactory.createTerminal();
-        //SwingTerminalFrame term = defaultTerminalFactory.createSwingTerminal();
-        //SwingTerminalFrame terminal = new SwingTerminalFrame("Game", TerminalEmulatorAutoCloseTrigger.CloseOnEscape);
-        //terminal.setSize(100, 100);
-        //terminal.setVisible(true);
-        return term;
-    }
+
 
     @Override
     public void init(SubsystemManager manager) {
         this.manager = manager;
-        try {
-            terminal = createTerminal();
-            manager.getLogger().info("Terminal created");
-            screen = new TerminalScreen(terminal);
-            screen.startScreen();
-            gui = new MultiWindowTextGUI(screen);
-            strokeSupplier = new TerminalPollingKeyStrokeSupplier(terminal);
-            //terminal.requestFocus();
-            //terminal.setFocusable(true);
-            //terminal.setFocusTraversalKeysEnabled(false);
-        } catch (IOException e) {
-            manager.getLogger().severe("Unable to create terminal");
-        }
         thread.start();
     }
 
 
     public void addMultipleStringSelectionWindow(String promptName, List<String> choices, MultiStringSelectionWindow.Callback callback, boolean blocking) {
-        MultiStringSelectionWindow window = new MultiStringSelectionWindow(promptName, choices, callback);
-        if (blocking) {
-            gui.addWindowAndWait(window);
-        } else {
-            isMenuOpen = true;
-            gui.addWindow(new MultiStringSelectionWindow(promptName, choices, callback));
-        }
+
     }
 
     public void addStringSelectionWindow(String promptName, List<String> choices, StringSelectionWindow.Callback t, boolean blocking) {
-        StringSelectionWindow window = new StringSelectionWindow(promptName, choices, t);
-        if (blocking) {
-            gui.addWindowAndWait(window);
-        } else {
-            isMenuOpen = true;
-            gui.addWindow(window);
-        }
+
     }
 
     public void addMessage(String header, String message, boolean blocking) {
-        NotificationWindow window = new NotificationWindow(header, message);
-        if (blocking) {
-            gui.addWindowAndWait(window);
-        } else {
-            isMenuOpen = true;
-            gui.addWindow(window);
-        }
+
     }
 
     public void addItemSelectionWindow(String promptName, List<Item> choices, MultiItemSelectionWindow.Callback callback, boolean blocking) {
-        MultiItemSelectionWindow itemSelectionWindow = new MultiItemSelectionWindow(promptName, choices, callback);
-        if (blocking) {
-            gui.addWindowAndWait(itemSelectionWindow);
-        } else {
-            isMenuOpen = true;
-            gui.addWindow(new MultiItemSelectionWindow(promptName, choices, callback));
-        }
+
     }
 
     protected class ScreenRendererThread implements Runnable {
@@ -153,40 +98,6 @@ public class Display implements ISubsystem {
 
         public void run() {
             while (running) {
-                 Optional<List<List<TextCharacter>>> frame = frameProvider.getFrame();
-                try {
-                    TimeUnit.MILLISECONDS.sleep((long) (1.0 / (double) getRefreshRate() * 1000));
-                } catch (InterruptedException e) {
-                    manager.getLogger().warning("Interrupted exception on frame");
-                }
-
-
-
-                try {
-
-                    if (isMenuOpen()) {
-                        gui.updateScreen();
-                    } else {
-                        screen.setCursorPosition(null);
-                        frameProvider.getFrame().ifPresent(Display.this::drawFrame);
-                    }
-                    if (strokeHandler != null) {
-                        KeyStroke stroke = strokeSupplier.getKeyStroke();
-                        if ((isMenuOpen()) && stroke!=null) {
-                            gui.handleInput(stroke);
-                        }
-                        if (!isMenuOpen() && stroke!=null) {
-                            strokeHandler.handleInput(stroke);
-                        }
-                    }
-                    screen.refresh();
-                    screen.doResizeIfNecessary();
-                    terminal.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
             }
 
         }
@@ -198,9 +109,6 @@ public class Display implements ISubsystem {
 
 
     public void closeGui() {
-        for (Window w : gui.getWindows()) {
-            w.close();
-        }
     }
     protected void drawFrame(List<List<TextCharacter>> frame) {
         synchronized (displayLock) {
@@ -234,11 +142,11 @@ public class Display implements ISubsystem {
 
 
     public int getScreenX() {
-        return screen.getTerminalSize().getColumns();
+        return 0;
     }
 
     public int getScreenY() {
-        return screen.getTerminalSize().getRows();
+        return 0;
     }
 
     public String fileSelectionDialog(String title, String desc) {
@@ -255,32 +163,16 @@ public class Display implements ISubsystem {
     }
 
     public void listMessage(String promptName, List<String> items, boolean blocking) {
-        if (blocking) {
-            gui.addWindowAndWait(new ListMessageWindow(promptName, items));
-        } else {
-            isMenuOpen = true;
-            gui.addWindow(new ListMessageWindow(promptName, items));
-        }
+
     }
 
     public void addItemSelectionWindow(String promptName, String message, List<Item> items, ItemSelectionWindow.Callback t, boolean blocking) {
-        if (blocking) {
-            gui.addWindowAndWait(new ItemSelectionWindow(promptName, message, items, t));
-        } else {
-            isMenuOpen = true;
-            gui.addWindow(new ItemSelectionWindow(promptName, message, items, t));
-        }
+
     }
     @Override
     public void stop() {
         //TODO: Remove deprecated method.
         thread.stop();
-        try {
-            terminal.clearScreen();
-            terminal.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }
