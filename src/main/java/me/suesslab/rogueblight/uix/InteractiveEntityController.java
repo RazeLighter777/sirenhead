@@ -204,7 +204,7 @@ public class InteractiveEntityController extends EntityController implements IFr
     public boolean openDropMenu() {
         if ((controller.dropKeyPressed()) && (display.isMenuOpen() == false)) {
             Inventory i = entity.body.getInventoryComponent().get();
-            display.addItemSelectionWindow("Drop which items?", i.getItems(),this::dropInventoryItemCallback, false);
+ //           display.addItemSelectionWindow("Drop which items?", i.getItems(),this::dropInventoryItemCallback, false);
             return true;
         }
         return false;
@@ -298,7 +298,7 @@ public class InteractiveEntityController extends EntityController implements IFr
                 pickupItemQueue = itemsAtPosition;
                 return true;
             } else {
-                display.addItemSelectionWindow("Pick up which items?", itemsAtPosition,this::pickupItemCallback, false);
+                //display.addItemSelectionWindow("Pick up which items?", itemsAtPosition,this::pickupItemCallback, false);
                 return true;
             }
 
@@ -341,7 +341,7 @@ public class InteractiveEntityController extends EntityController implements IFr
     private boolean openThrowItemMenu() {
         if (!display.isMenuOpen() && controller.throwKeyPressed() && entity.body.getInventoryComponent().isPresent()) {
             Inventory i = entity.body.getInventoryComponent().get();
-            display.addItemSelectionWindow("Throw which item?", "Select item", i.getItems(), this::throwItemCallback, false);
+            //display.addItemSelectionWindow("Throw which item?", "Select item", i.getItems(), this::throwItemCallback, false);
             return true;
         }
         return false;

@@ -8,6 +8,7 @@ package me.suesslab.rogueblight.uix;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -22,11 +23,14 @@ import me.suesslab.rogueblight.lib.ISubsystem;
 import me.suesslab.rogueblight.lib.io.TerminalPollingKeyStrokeSupplier;
 import me.suesslab.rogueblight.uix.gui.*;
 import org.hexworks.zircon.api.CP437TilesetResources;
+import org.hexworks.zircon.api.ColorThemes;
+import org.hexworks.zircon.api.Components;
 import org.hexworks.zircon.api.SwingApplications;
 import org.hexworks.zircon.api.application.AppConfig;
+import org.hexworks.zircon.api.component.AttachedComponent;
+import org.hexworks.zircon.api.data.Position;
 import org.hexworks.zircon.api.grid.TileGrid;
 import org.hexworks.zircon.api.screen.Screen;
-import org.hexworks.zircon.internal.resource.CP437TilesetResource;
 
 /**
  * @author justin
@@ -41,7 +45,7 @@ public class Display implements ISubsystem {
     private final static Object displayLock = new Object();
     private Thread thread;
     private IKeyStrokeHandler strokeHandler;
-
+    private ArrayList<AttachedComponent> attachedComponentList;
     TileGrid tileGrid;
     Screen screen;
 
@@ -54,6 +58,7 @@ public class Display implements ISubsystem {
     private volatile boolean isMenuOpen = false;
 
     public Display() {
+        attachedComponentList = new ArrayList<>();
     }
 
     public void setStrokeHandler(IKeyStrokeHandler strokeHandler) {
@@ -70,23 +75,46 @@ public class Display implements ISubsystem {
     public void init(SubsystemManager manager) {
         this.manager = manager;
         tileGrid = SwingApplications.startTileGrid(AppConfig.newBuilder().withSize(60, 30).withDefaultTileset(CP437TilesetResources.bisasam16x16()).build());
+        screen  = Screen.create(tileGrid);
+        screen.display();
+        screen.setTheme(ColorThemes.arc());
+
+        addMessage("hello", "world", true);
+        screen.display();
         thread.start();
     }
 
 
-    public void addMultipleStringSelectionWindow(String promptName, List<String> choices, MultiStringSelectionWindow.Callback callback, boolean blocking) {
-
+    public void addMultipleStringSelectionWindow(String promptName, List<String> choices, boolean blocking) {
+        //screen.addComponent(Components);
     }
 
-    public void addStringSelectionWindow(String promptName, List<String> choices, StringSelectionWindow.Callback t, boolean blocking) {
+    public void addStringSelectionWindow(String promptName, List<String> choices, boolean blocking) {
 
     }
 
     public void addMessage(String header, String message, boolean blocking) {
+        if (blocking) {
+            ThreadedFragment tf = new NotificationWindow(header, message, Position.create(0,0));
+            AttachedComponent ac = screen.addFragment(tf);
+            screen.display();
+            while (true) {
+                if (tf.isFinished()) {
+                    ac.detach();
+                }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
 
+        } else {
+            screen.addFragment(new NotificationWindow(header, message, Position.create(0,0)));
+        }
     }
 
-    public void addItemSelectionWindow(String promptName, List<Item> choices, MultiItemSelectionWindow.Callback callback, boolean blocking) {
+    public void addItemSelectionWindow(String promptName, List<Item> choices, boolean blocking) {
 
     }
 
@@ -100,7 +128,11 @@ public class Display implements ISubsystem {
 
         public void run() {
             while (running) {
-                screen.display();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
         }
@@ -138,7 +170,7 @@ public class Display implements ISubsystem {
 
     }
 
-    public void addItemSelectionWindow(String promptName, String message, List<Item> items, ItemSelectionWindow.Callback t, boolean blocking) {
+    public void addItemSelectionWindow(String promptName, String message, List<Item> items, boolean blocking) {
 
     }
     @Override

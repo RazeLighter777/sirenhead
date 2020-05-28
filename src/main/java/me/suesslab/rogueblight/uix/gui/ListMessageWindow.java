@@ -1,17 +1,15 @@
 package me.suesslab.rogueblight.uix.gui;
 
-import com.googlecode.lanterna.gui2.*;
+import org.hexworks.zircon.api.component.Component;
+import org.hexworks.zircon.api.component.Fragment;
+import org.hexworks.zircon.api.screen.Screen;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+public class ListMessageWindow implements Fragment {
 
-public class ListMessageWindow  extends BasicWindow  {
-    public ListMessageWindow(String header, List<String> message) {
-        super(header);
-        Panel panel = new Panel();
-        for (String s : message) {
-            panel.addComponent(new Label(s));
-        }
-        panel.addComponent(new Button("Close", () -> {close(); }));
-        setComponent(panel);
+    @NotNull
+    @Override
+    public Component getRoot() {
+        return null;
     }
 }

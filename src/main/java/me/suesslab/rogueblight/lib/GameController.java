@@ -41,7 +41,7 @@ public class GameController implements  ISubsystem, IFrameProvider  {
         while (true) {
 
             if (!display.isMenuOpen()) {
-                display.addStringSelectionWindow(ResourceBundle.getBundle("Game").getString("Title"), new ArrayList<>(Arrays.asList("SELECT SAVE", "EXIT")), this::mainMenuCallBack, false);
+//                display.addStringSelectionWindow(ResourceBundle.getBundle("Game").getString("Title"), new ArrayList<>(Arrays.asList("SELECT SAVE", "EXIT")), this::mainMenuCallBack, false);
             } else {
                 if (newChoice) {
                     if (!executeChoice()) {
