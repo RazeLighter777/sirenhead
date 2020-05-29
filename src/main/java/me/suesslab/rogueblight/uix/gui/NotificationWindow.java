@@ -14,30 +14,21 @@ import org.hexworks.zircon.api.uievent.UIEventResponse;
 import org.jetbrains.annotations.NotNull;
 import sun.font.Decoration;
 
-public class NotificationWindow extends ThreadedFragment {
+public class NotificationWindow extends StandardWindow {
 
-    Panel notificationBox;
     Button okButton;
 
     public NotificationWindow(String header, String message, Screen screen) {
-        notificationBox = Components.panel().withDecorations(ComponentDecorations.box(BoxType.DOUBLE))
-                .withSize(screen.getSize().minus(Size.create(10,10)))
-                .withAlignmentWithin(screen, ComponentAlignment.CENTER)
-                .build();
-        notificationBox.requestFocus();
+        super(header, screen);
+        box.requestFocus();
         okButton = Components.button()
-                .withAlignmentWithin(notificationBox, ComponentAlignment.BOTTOM_CENTER)
+                .withAlignmentWithin(box, ComponentAlignment.BOTTOM_CENTER)
                 .withText("OK")
                 .build();
-        notificationBox.addComponent(okButton);
-
-        notificationBox.addComponent(Components
+        box.addComponent(okButton);
+        box.addComponent(Components
                 .listItem().withText(message)
-                .withAlignmentWithin(notificationBox, ComponentAlignment.CENTER)
-                .build());
-        notificationBox.addComponent(Components.header()
-                .withAlignmentWithin(notificationBox, ComponentAlignment.TOP_CENTER)
-                .withText(header)
+                .withAlignmentWithin(box, ComponentAlignment.CENTER)
                 .build());
         okButton.handleComponentEvents(ComponentEventType.ACTIVATED, componentEvent -> {
             finish();
@@ -45,9 +36,4 @@ public class NotificationWindow extends ThreadedFragment {
         });
     }
 
-    @NotNull
-    @Override
-    public Component getRoot() {
-        return notificationBox;
-    }
 }

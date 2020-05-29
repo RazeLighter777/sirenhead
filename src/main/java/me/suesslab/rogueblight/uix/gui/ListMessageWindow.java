@@ -16,21 +16,16 @@ import sun.tools.jconsole.Plotter;
 
 import java.util.List;
 
-public class ListMessageWindow extends ThreadedFragment {
+public class ListMessageWindow extends StandardWindow {
 
-    Panel box;
     Button button;
     LogArea logArea;
-    List<String> items;
+    protected List<String> items;
     int currentPage = 0;
     int pageNumbers = 0;
     public ListMessageWindow(String message, List<String> items, Screen screen) {
+        super(message, screen);
         this.items = items;
-        box = Components.panel()
-                .withSize(screen.getSize().minus(Size.create(10,10)))
-                .withDecorations(ComponentDecorations.box(BoxType.DOUBLE))
-                .withAlignmentWithin(screen, ComponentAlignment.CENTER)
-                .build();
         button = Components.button().withText("OK").withAlignmentWithin(box, ComponentAlignment.BOTTOM_CENTER).build();
         button.handleComponentEvents(ComponentEventType.ACTIVATED, componentEvent -> {
             finish();
@@ -51,11 +46,6 @@ public class ListMessageWindow extends ThreadedFragment {
         });
         renderPage(0);
         box.addComponent(scrollBar);
-    }
-    @NotNull
-    @Override
-    public Component getRoot() {
-        return box;
     }
 
     public void renderPage(int progress) {

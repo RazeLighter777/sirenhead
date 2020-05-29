@@ -13,7 +13,9 @@ public class OpenMenu {
 
     public void waitForClose() {
         while (true) {
-            closeIfReady();
+            if (closeIfReady()) {
+                break;
+            }
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {

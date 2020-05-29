@@ -79,13 +79,17 @@ public class Display implements ISubsystem {
         screen.setTheme(ColorThemes.amigaOs());
         //addMessage("hello", "this is a", false);
         ArrayList<String> testArray = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 3; i++) {
             testArray.add("option" + i);
         }
-        listMessage("list", testArray, false);
+        addStringSelectionWindow("test", testArray, true, this::selection);
         screen.display();
         thread = new ScreenRendererThread();
         thread.start();
+    }
+
+    public void selection(Integer selection) {
+        System.out.println(selection);
     }
 
 
@@ -93,8 +97,15 @@ public class Display implements ISubsystem {
         //screen.addComponent(Components);
     }
 
-    public void addStringSelectionWindow(String promptName, List<String> choices, boolean blocking) {
-
+    public void addStringSelectionWindow(String promptName, List<String> choices, boolean blocking, StringSelectionWindow.Callback t) {
+        ThreadedFragment tf = new StringSelectionWindow(promptName, choices, screen, t);
+        AttachedComponent ac = screen.addFragment(tf);
+        OpenMenu om = new OpenMenu(ac, tf);
+        if (blocking) {
+            om.waitForClose();
+        } else {
+            openMenus.add(om);
+        }
     }
 
     public void addMessage(String header, String message, boolean blocking) {
@@ -129,6 +140,7 @@ public class Display implements ISubsystem {
                         OpenMenu m = iterator.next();
                         if (m.closeIfReady()) {
                             openMenus.remove(m);
+                            manager.getLogger().warning("Menu removed");
                         }
                     } catch (ConcurrentModificationException e) {
                         manager.getLogger().warning("Concurrent Modification Exception with the menu");
