@@ -28,6 +28,7 @@ import org.hexworks.zircon.api.SwingApplications;
 import org.hexworks.zircon.api.application.AppConfig;
 import org.hexworks.zircon.api.component.AttachedComponent;
 import org.hexworks.zircon.api.data.Position;
+import org.hexworks.zircon.api.graphics.Layer;
 import org.hexworks.zircon.api.grid.TileGrid;
 import org.hexworks.zircon.api.screen.Screen;
 
@@ -79,7 +80,7 @@ public class Display implements ISubsystem {
         screen.setTheme(ColorThemes.amigaOs());
         //addMessage("hello", "this is a", false);
         ArrayList<String> testArray = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 200; i++) {
             testArray.add("option" + i);
         }
         addStringSelectionWindow("test", testArray, true, this::selection);

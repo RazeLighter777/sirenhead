@@ -20,6 +20,7 @@ public abstract class StandardWindow extends  ThreadedFragment {
                 .withAlignmentWithin(screen, ComponentAlignment.CENTER)
                 .build();
         box.addComponent(Components.header().withText(header).withAlignmentWithin(box, ComponentAlignment.TOP_CENTER).build());
+        //box.clear();
     }
 
     @NotNull
