@@ -18,9 +18,7 @@ import me.suesslab.rogueblight.item.Item;
 import me.suesslab.rogueblight.lib.io.IKeyStrokeHandler;
 import me.suesslab.rogueblight.lib.io.IKeyStrokeSupplier;
 import me.suesslab.rogueblight.lib.ISubsystem;
-import me.suesslab.rogueblight.lib.io.TerminalPollingKeyStrokeSupplier;
 import me.suesslab.rogueblight.uix.gui.*;
-import org.graalvm.compiler.nodes.calc.IntegerDivRemNode;
 import org.hexworks.zircon.api.CP437TilesetResources;
 import org.hexworks.zircon.api.ColorThemes;
 import org.hexworks.zircon.api.Components;
@@ -31,6 +29,9 @@ import org.hexworks.zircon.api.data.Position;
 import org.hexworks.zircon.api.graphics.Layer;
 import org.hexworks.zircon.api.grid.TileGrid;
 import org.hexworks.zircon.api.screen.Screen;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * @author justin
@@ -183,6 +184,17 @@ public class Display implements ISubsystem {
     }
 
     public String fileSelectionDialog(String title, String desc) {
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "JSON Save Files", "json");
+        chooser.setFileFilter(filter);
+        chooser.setCurrentDirectory(new File("."));
+        int returnVal = chooser.showOpenDialog(null);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            System.out.println("You chose to open this file: " +
+                    chooser.getSelectedFile().getAbsolutePath());
+            return chooser.getSelectedFile().getAbsolutePath();
+        }
         return "";
     }
 

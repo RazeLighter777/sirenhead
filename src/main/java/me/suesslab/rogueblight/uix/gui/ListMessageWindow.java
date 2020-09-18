@@ -11,8 +11,6 @@ import org.hexworks.zircon.api.graphics.BoxType;
 import org.hexworks.zircon.api.screen.Screen;
 import org.hexworks.zircon.api.uievent.ComponentEventType;
 import org.hexworks.zircon.api.uievent.UIEventResponse;
-import org.jetbrains.annotations.NotNull;
-import sun.tools.jconsole.Plotter;
 
 import java.util.List;
 

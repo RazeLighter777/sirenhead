@@ -33,14 +33,11 @@ public class StringSelectionWindow extends StandardWindow {
 
     Callback callback;
     Button button;
-    RadioButtonGroup radioBoxList;
-    VBox vbox;
+    NumberInput numberInput;
+    LogArea logArea;
     //Buttons correspond with choices.
     List<String> choices;
-    List<RadioButton> buttons;
-    List<Component> components;
-    ScrollBar scrollBar;
-    Position lockedScrollBarPosition, lockedButtonPosition;
+
     public interface Callback {
         public void callback(Integer selection);
     }
@@ -48,59 +45,34 @@ public class StringSelectionWindow extends StandardWindow {
         super(message, screen);
         this.choices = choices;
         this.callback = callback;
-        buttons = new ArrayList<>();
-        components = new ArrayList<>();
-        vbox = getVbox();
-        button = Components.button().withText("OK").withAlignmentWithin(box, ComponentAlignment.BOTTOM_CENTER).build();
-
-        button = Components.button().withText("OK").withAlignmentWithin(box, ComponentAlignment.BOTTOM_CENTER).build();
-        button.handleComponentEvents(ComponentEventType.ACTIVATED, componentEvent -> {
+        numberInput = Components.horizontalNumberInput(4).withSize(4,1).withInitialValue(1).withMaxValue(choices.size()+1).withMinValue(1).withAlignmentWithin(box, ComponentAlignment.BOTTOM_CENTER).build();
+        button = Components.button().withText("OK").withAlignmentAround(numberInput, ComponentAlignment.RIGHT_CENTER).build();
+        button.handleComponentEvents(ComponentEventType.ACTIVATED, event -> {
+            System.out.println(numberInput.getCurrentValue() - 1 );
+            callback.callback(numberInput.getCurrentValue() - 1);
             finish();
-            Integer selection = -1;
-            if (radioBoxList.getSelectedButton().isPresent()) {
-                selection = Integer.parseInt(radioBoxList.getSelectedButton().get().getKey());
-            }
-            callback.callback(selection);
             return UIEventResponse.pass();
         });
-        scrollBar = (Components.verticalScrollbar().withSize(1, box.getHeight() - 2 ).withAlignmentWithin(box, ComponentAlignment.LEFT_CENTER).withNumberOfScrollableItems(choices.size() + 3).build());
+        numberInput.requestFocus();
+        logArea = Components.logArea()
+                .withSize(box.getWidth() - 4, box.getHeight() - 4)
+                .withAlignmentWithin(box, ComponentAlignment.CENTER)
+                .withDecorations(ComponentDecorations.box(BoxType.DOUBLE))
+                .build();
+        box.addComponent(logArea);
+        box.addComponent(button);
+        box.addComponent(numberInput);
+        ScrollBar scrollBar = (Components.verticalScrollbar().withSize(1, box.getHeight() -2 ).withAlignmentWithin(box, ComponentAlignment.LEFT_CENTER).withNumberOfScrollableItems(choices.size() + 3).build());
         scrollBar.onValueChange(value -> {
             System.out.println(value.getNewValue());
             renderPage(value.getNewValue());
             return Unit.INSTANCE;
         });
-
-        components.add(scrollBar);
-        components.add(vbox);
-        components.add(button);
-        lockedScrollBarPosition = scrollBar.getPosition();
-        lockedButtonPosition = button.getPosition();
-        scrollBar.setCurrentValue(6);
-        //renderPage(0);
+        renderPage(0);
+        box.addComponent(scrollBar);
     }
 
-    private void renderPage(Integer progress) {
-        box.clear();
-        //Replace the vbox
-        VBox newVbox = getVbox();
-        components.remove(vbox);
-        components.add(newVbox);
-        vbox = newVbox;
-        radioBoxList = Components.radioButtonGroup().build();
-        //Add the radioboxes to the new vbox
-        for (int i = progress; (i < (progress + vbox.getHeight() - 2)) && (i < choices.size()); i++) {
-            RadioButton radioButton = Components.radioButton()
-                    .withText(choices.get(i))
-                    .withKey("" + i)
-                    .build();
-            radioBoxList.addComponent(radioButton);
-            newVbox.addComponent(radioButton);
-        }
-        scrollBar.moveTo(lockedScrollBarPosition);
-        button.moveTo(lockedButtonPosition);
-        System.out.println(button.getPosition());
-        components.forEach(box::addComponent);
-    }
+
 
     private VBox getVbox() {
         return Components.vbox()
@@ -108,6 +80,13 @@ public class StringSelectionWindow extends StandardWindow {
                 .withDecorations(ComponentDecorations.box(BoxType.DOUBLE))
                 .withAlignmentWithin(box, ComponentAlignment.CENTER)
                 .build();
+    }
+
+    public void renderPage(int progress) {
+        logArea.clear();
+        for (int i = progress; (i < (progress + logArea.getHeight() - 2)) && (i < choices.size()); i++) {
+            logArea.addListItem( " " + i+1 + ": " + choices.get(i));
+        }
     }
 
 

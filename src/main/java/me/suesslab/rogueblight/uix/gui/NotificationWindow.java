@@ -12,7 +12,6 @@ import org.hexworks.zircon.api.screen.Screen;
 import org.hexworks.zircon.api.uievent.ComponentEventType;
 import org.hexworks.zircon.api.uievent.UIEventResponse;
 import org.jetbrains.annotations.NotNull;
-import sun.font.Decoration;
 
 public class NotificationWindow extends StandardWindow {
 
@@ -28,6 +27,7 @@ public class NotificationWindow extends StandardWindow {
         box.addComponent(okButton);
         box.addComponent(Components
                 .listItem().withText(message)
+                .withSize(Size.create(30, 4))
                 .withAlignmentWithin(box, ComponentAlignment.CENTER)
                 .build());
         okButton.handleComponentEvents(ComponentEventType.ACTIVATED, componentEvent -> {

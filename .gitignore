@@ -4,3 +4,8 @@ build/*
 gradle/*
 .nb-gradle/*
 game/*
+game/*
+bin/*
+.vscode/*
+.settings/*
+doc/*
