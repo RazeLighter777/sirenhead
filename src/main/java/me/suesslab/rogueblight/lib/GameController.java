@@ -5,10 +5,8 @@ import com.googlecode.lanterna.TextCharacter;
 import me.suesslab.rogueblight.SubsystemManager;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.lib.audio.AudioManager;
-import me.suesslab.rogueblight.lib.io.KeyBoardController;
 import me.suesslab.rogueblight.uix.Display;
 import me.suesslab.rogueblight.uix.IFrameProvider;
-import me.suesslab.rogueblight.uix.InteractiveEntityController;
 import me.suesslab.rogueblight.world.World;
 
 import java.io.*;

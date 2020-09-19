@@ -7,26 +7,19 @@ package me.suesslab.rogueblight.uix;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 import com.googlecode.lanterna.TextCharacter;
 import me.suesslab.rogueblight.SubsystemManager;
 import me.suesslab.rogueblight.item.Item;
-import me.suesslab.rogueblight.lib.io.IKeyStrokeHandler;
-import me.suesslab.rogueblight.lib.io.IKeyStrokeSupplier;
 import me.suesslab.rogueblight.lib.ISubsystem;
 import me.suesslab.rogueblight.uix.gui.*;
 import org.hexworks.zircon.api.CP437TilesetResources;
 import org.hexworks.zircon.api.ColorThemes;
-import org.hexworks.zircon.api.Components;
 import org.hexworks.zircon.api.SwingApplications;
 import org.hexworks.zircon.api.application.AppConfig;
 import org.hexworks.zircon.api.component.AttachedComponent;
-import org.hexworks.zircon.api.data.Position;
-import org.hexworks.zircon.api.graphics.Layer;
 import org.hexworks.zircon.api.grid.TileGrid;
 import org.hexworks.zircon.api.screen.Screen;
 
@@ -40,12 +33,12 @@ public class Display implements ISubsystem {
 
 
     private SubsystemManager manager;
-    private IKeyStrokeSupplier strokeSupplier;
+    //private IKeyStrokeSupplier strokeSupplier;
 
     private IFrameProvider frameProvider;
     private final static Object displayLock = new Object();
     private Thread thread;
-    private IKeyStrokeHandler strokeHandler;
+    //private IKeyStrokeHandler strokeHandler;
     private CopyOnWriteArrayList<OpenMenu> openMenus;
     TileGrid tileGrid;
     Screen screen;
@@ -62,13 +55,13 @@ public class Display implements ISubsystem {
         openMenus = new CopyOnWriteArrayList<>();
     }
 
-    public void setStrokeHandler(IKeyStrokeHandler strokeHandler) {
-        this.strokeHandler = strokeHandler;
-    }
+    //public void setStrokeHandler(IKeyStrokeHandler strokeHandler) {
+    //    this.strokeHandler = strokeHandler;
+    //}
 
-    public void setStrokeSupplier(IKeyStrokeSupplier strokeSupplier) {
-        this.strokeSupplier = strokeSupplier;
-    }
+    //public void setStrokeSupplier(IKeyStrokeSupplier strokeSupplier) {
+    //    this.strokeSupplier = strokeSupplier;
+    //}
 
 
 

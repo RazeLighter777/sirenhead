@@ -13,7 +13,6 @@ import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.Item;
 import me.suesslab.rogueblight.item.itemcontainer.ItemContainer;
 import me.suesslab.rogueblight.lib.Vector;
-import me.suesslab.rogueblight.lib.io.IActionSupplier;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.literary.StringLog;
 import me.suesslab.rogueblight.tile.Tile;
@@ -26,14 +25,14 @@ public class InteractiveEntityController extends EntityController implements IFr
     private Display display;
     private SubsystemManager manager;
     private List<List<TextCharacter>> currentFrame;
-    private IActionSupplier controller;
+   //private IActionSupplier controller;
     private long nextMoveTick = 0;
     private StringLog relevantInteractionsLog;
     private boolean freeCursorMode = false;
     private Vector cursorPosition = new Vector(0,0);
-    public InteractiveEntityController(Entity e, Display display, IActionSupplier controller) {
+    public InteractiveEntityController(Entity e, Display display) {
         super(e);
-        this.controller = controller;
+        //this.controller = controller;
         this.display = display;
         currentFrame = new ArrayList<>();
         this.entity = e;
@@ -112,10 +111,10 @@ public class InteractiveEntityController extends EntityController implements IFr
                 }
             }
             //If the free cursor key is pressed, free the cursor.
-            if (controller.freeCursorKeyPressed()) {
-                freeCursorMode = !freeCursorMode;
-                System.out.println("Free cursor mode: " + freeCursorMode);
-            }
+            //if (controller.freeCursorKeyPressed()) {
+            //    freeCursorMode = !freeCursorMode;
+            //    System.out.println("Free cursor mode: " + freeCursorMode);
+            //}
 
             //if the pickup item key is pressed, pickup the item.
             if (openPickupMenu()) {
@@ -162,21 +161,21 @@ public class InteractiveEntityController extends EntityController implements IFr
             cursorPosition.setY(0d);
         }
         //Alter the cursor position based on the values here
-        switch(controller.getDirection()) {
-            case N:
-                cursorPosition.add(new Vector(0,-.1d));
-                return true;
-            case S:
-                cursorPosition.add(new Vector(0, .1d));
-                return true;
-            case W:
-                cursorPosition.add(new Vector(-.1d, 0));
-                return true;
-            case E:
-                cursorPosition.add(new Vector(.1d, 0));
-                return true;
-        }
-        return false;
+        //switch(controller.getDirection()) {
+        //    case N:
+        //        cursorPosition.add(new Vector(0,-.1d));
+        //        return true;
+        //    case S:
+        //        cursorPosition.add(new Vector(0, .1d));
+        //        return true;
+        //    case W:
+        //        cursorPosition.add(new Vector(-.1d, 0));
+        //        return true;
+        //    case E:
+        //        cursorPosition.add(new Vector(.1d, 0));
+        //        return true;
+        //}
+        //return false;
     }
 
     private volatile List<Item> itemDropQueue = null;

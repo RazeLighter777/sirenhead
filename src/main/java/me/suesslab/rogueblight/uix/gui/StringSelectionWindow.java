@@ -85,7 +85,7 @@ public class StringSelectionWindow extends StandardWindow {
     public void renderPage(int progress) {
         logArea.clear();
         for (int i = progress; (i < (progress + logArea.getHeight() - 2)) && (i < choices.size()); i++) {
-            logArea.addListItem( " " + i+1 + ": " + choices.get(i));
+            logArea.addListItem( " " + (i+1) + ": " + choices.get(i));
         }
     }
 
