@@ -12,12 +12,15 @@ import me.suesslab.rogueblight.interact.implementations.ThrowLaunchInteraction;
 import me.suesslab.rogueblight.item.Inventory;
 import me.suesslab.rogueblight.item.Item;
 import me.suesslab.rogueblight.item.itemcontainer.ItemContainer;
+import me.suesslab.rogueblight.lib.Direction;
 import me.suesslab.rogueblight.lib.Vector;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.literary.StringLog;
 import me.suesslab.rogueblight.tile.Tile;
+import org.hexworks.zircon.api.uievent.*;
 
 import java.util.*;
+import java.util.concurrent.SynchronousQueue;
 
 public class InteractiveEntityController extends EntityController implements IFrameProvider {
 
@@ -30,6 +33,11 @@ public class InteractiveEntityController extends EntityController implements IFr
     private StringLog relevantInteractionsLog;
     private boolean freeCursorMode = false;
     private Vector cursorPosition = new Vector(0,0);
+
+    private interface action {
+        public int action();
+    }
+    private Queue<action> actionQueue = new SynchronousQueue<>();
     public InteractiveEntityController(Entity e, Display display) {
         super(e);
         //this.controller = controller;
@@ -39,6 +47,8 @@ public class InteractiveEntityController extends EntityController implements IFr
         relevantInteractionsLog = new StringLog(100);
         e.getData().addProperty("isLocalPlayer", true);
     }
+
+
 
     @Override
     public Optional<List<List<TextCharacter>>> getFrame() {
@@ -99,49 +109,14 @@ public class InteractiveEntityController extends EntityController implements IFr
 
     @Override
     public void update() {
-        if (entity.getWorld().getTick() >= nextMoveTick) {
-            //if a movement key is pressed, move.
-            if (!freeCursorMode) {
-                if (updateMovement()) {
-                    return;
-                }
-            } else {
-                if (updateCursorMovement()) {
-                    return;
-                }
-            }
-            //If the free cursor key is pressed, free the cursor.
-            //if (controller.freeCursorKeyPressed()) {
-            //    freeCursorMode = !freeCursorMode;
-            //    System.out.println("Free cursor mode: " + freeCursorMode);
-            //}
-
-            //if the pickup item key is pressed, pickup the item.
-            if (openPickupMenu()) {
-                return;
-            }
-            //If the drop menu key is pressed, open up the drop menu.
-            if (openDropMenu()) {
-                return;
-            }
-            if (openLogMenu()) {
-                return;
-            }
-            if (openThrowItemMenu()) {
-                return ;
-            }
-            //if there are items to drop drop them.
-            if (itemDropQueue != null) {
-                dropQueuedItems();
-            }
-
-            //if there are items to pickup pick them up
-            if (pickupItemQueue != null) {
-                pickupQueuedItems();
-            }
-            //if there are items to throw, throw them.
-            if (throwItemQueue != null) {
-                throwQueuedItem();
+        if (nextMoveTick > 0) {
+            nextMoveTick--;
+            return;
+        }
+        for (action a : actionQueue) {
+            nextMoveTick+=a.action();
+            if (nextMoveTick > 0) {
+                break;
             }
         }
     }
@@ -211,48 +186,43 @@ public class InteractiveEntityController extends EntityController implements IFr
 
 
 
-    public boolean updateMovement() {
-        Position oldPos = entity.getPos();
-
-        switch (controller.getDirection()) {
-            case S:
-                entity.getPos().setY(entity.getPos().getY() + 1);
-                break;
-            case W:
-                entity.getPos().setX(entity.getPos().getX() - 1);
-                break;
-            case E:
-                entity.getPos().setX(entity.getPos().getX() + 1);
-                break;
-            case N:
-                entity.getPos().setY(entity.getPos().getY() - 1);
-                break;
-            case NE:
-                entity.getPos().setY(entity.getPos().getY() - 1);
-                entity.getPos().setX(entity.getPos().getX() + 1);
-                break;
-            case NW:
-                entity.getPos().setY(entity.getPos().getY() - 1);
-                entity.getPos().setX(entity.getPos().getX() - 1);
-                break;
-            case SE:
-                entity.getPos().setY(entity.getPos().getY() + 1);
-                entity.getPos().setX(entity.getPos().getX() + 1);
-                break;
-            case SW:
-                entity.getPos().setY(entity.getPos().getY() + 1);
-                entity.getPos().setX(entity.getPos().getX() - 1);
-                break;
-            case NONE:
-            default:
-                break;
-        }
-        if (controller.getDirection() != IActionSupplier.Direction.NONE) {
-            //Set the nextMoveTick based upon the distance rule and the movement speed.
-            nextMoveTick = entity.getWorld().getTick() + (long)(oldPos.distanceTo(entity.getPos()) * (double)(entity.body.getLivingComponent().isPresent() ? 100L / (long) entity.body.getLivingComponent().get().getMovementSpeed() : 1L));
-            return true;
-        }
-        return false;
+    public void move(Direction direction) {
+        actionQueue.add(() -> {
+            Position oldPos = entity.getPos();
+            switch (direction) {
+                case DOWN:
+                    entity.getPos().setY(entity.getPos().getY() + 1);
+                    break;
+                case LEFT:
+                    entity.getPos().setX(entity.getPos().getX() - 1);
+                    break;
+                case RIGHT:
+                    entity.getPos().setX(entity.getPos().getX() + 1);
+                    break;
+                case UP:
+                    entity.getPos().setY(entity.getPos().getY() - 1);
+                    break;
+                case UR:
+                    entity.getPos().setY(entity.getPos().getY() - 1);
+                    entity.getPos().setX(entity.getPos().getX() + 1);
+                    break;
+                case UL:
+                    entity.getPos().setY(entity.getPos().getY() - 1);
+                    entity.getPos().setX(entity.getPos().getX() - 1);
+                    break;
+                case DR:
+                    entity.getPos().setY(entity.getPos().getY() + 1);
+                    entity.getPos().setX(entity.getPos().getX() + 1);
+                    break;
+                case DL:
+                    entity.getPos().setY(entity.getPos().getY() + 1);
+                    entity.getPos().setX(entity.getPos().getX() - 1);
+                    break;
+                default:
+                    break;
+            }
+            return 1;
+        });
     }
 
     //Item pickup code
@@ -262,18 +232,23 @@ public class InteractiveEntityController extends EntityController implements IFr
         pickupItemQueue = pickups;
     }
     private void pickupQueuedItems() {
-        Iterator<Item> itemIterator = pickupItemQueue.iterator();
-        while (itemIterator.hasNext()) {
-            Item i = itemIterator.next();
-            entity.sendInteraction(new PickupInteraction(entity, i.getParent().getParent()));
-            Inventory.transferItem(i.getParent
-                    (), entity.body.getInventoryComponent().get(), i);
-        }
-        nextMoveTick = entity.getWorld().getTick() + 5;
-        pickupItemQueue = null;
+        actionQueue.add(() -> {
+            int time = 0;
+            Iterator<Item> itemIterator = pickupItemQueue.iterator();
+            while (itemIterator.hasNext()) {
+                Item i = itemIterator.next();
+                entity.sendInteraction(new PickupInteraction(entity, i.getParent().getParent()));
+                Inventory.transferItem(i.getParent
+                        (), entity.body.getInventoryComponent().get(), i);
+                time++;
+            }
+            pickupItemQueue = null;
+            return time * 5; //TODO: Add a calcuation for this value.
+        });
+
     }
     public boolean openPickupMenu() {
-        if ((controller.pickupKeyPressed()) && (display.isMenuOpen() == false)) {
+        if (entity.body.getInventoryComponent().isPresent() && display.isMenuOpen() == false) {
             Inventory i = entity.body.getInventoryComponent().get();
             List<Entity> entitiesAtPosition = entity.getWorld().getEntitiesAtPosition(entity.getPos());
             List<Entity> itemContainersAtPosition = new ArrayList<>();
@@ -305,12 +280,12 @@ public class InteractiveEntityController extends EntityController implements IFr
         return false;
     }
 
-    public boolean openLogMenu() {
-        if (controller.logKeyPressed() && !display.isMenuOpen()) {
+    public int openLogMenu() {
+        if (!display.isMenuOpen()) {
             display.listMessage("Event Log", relevantInteractionsLog.getLog(), false);
-            return true;
+            return 0;
         }
-        return false;
+        return 0;
     }
 
     @Override

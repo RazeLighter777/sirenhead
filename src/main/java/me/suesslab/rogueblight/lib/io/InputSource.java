@@ -1,9 +1,9 @@
 package me.suesslab.rogueblight.lib.io;
 
 public abstract class InputSource {
-    protected IInputHandler inputHandler;
+    protected InputHandler inputHandler;
 
-    public InputSource(IInputHandler handler) {
+    public InputSource(InputHandler handler) {
         inputHandler = handler;
     }
 
