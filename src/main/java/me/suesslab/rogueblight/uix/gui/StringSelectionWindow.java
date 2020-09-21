@@ -32,44 +32,24 @@ import java.util.Optional;
 public class StringSelectionWindow extends StandardWindow {
 
     Callback callback;
-    Button button;
-    NumberInput numberInput;
-    LogArea logArea;
+    Button button, next, prev;
+    VBox vbox;
+    int page;
     //Buttons correspond with choices.
     List<String> choices;
+    RadioButtonGroup radioButtonGroup;
+    List<Component> components;
 
     public interface Callback {
-        public void callback(Integer selection);
+        void callback(Integer selection);
     }
     public StringSelectionWindow(String message, List<String> choices, Screen screen, Callback callback) {
         super(message, screen);
+        components = new ArrayList<>();
         this.choices = choices;
         this.callback = callback;
-        numberInput = Components.horizontalNumberInput(4).withSize(4,1).withInitialValue(1).withMaxValue(choices.size()+1).withMinValue(1).withAlignmentWithin(box, ComponentAlignment.BOTTOM_CENTER).build();
-        button = Components.button().withText("OK").withAlignmentAround(numberInput, ComponentAlignment.RIGHT_CENTER).build();
-        button.handleComponentEvents(ComponentEventType.ACTIVATED, event -> {
-            System.out.println(numberInput.getCurrentValue() - 1 );
-            callback.callback(numberInput.getCurrentValue() - 1);
-            finish();
-            return UIEventResponse.pass();
-        });
-        numberInput.requestFocus();
-        logArea = Components.logArea()
-                .withSize(box.getWidth() - 4, box.getHeight() - 4)
-                .withAlignmentWithin(box, ComponentAlignment.CENTER)
-                .withDecorations(ComponentDecorations.box(BoxType.DOUBLE))
-                .build();
-        box.addComponent(logArea);
-        box.addComponent(button);
-        box.addComponent(numberInput);
-        ScrollBar scrollBar = (Components.verticalScrollbar().withSize(1, box.getHeight() -2 ).withAlignmentWithin(box, ComponentAlignment.LEFT_CENTER).withNumberOfScrollableItems(choices.size() + 3).build());
-        scrollBar.onValueChange(value -> {
-            System.out.println(value.getNewValue());
-            renderPage(value.getNewValue());
-            return Unit.INSTANCE;
-        });
-        renderPage(0);
-        box.addComponent(scrollBar);
+        vbox = getVbox();
+        renderPage();
     }
 
 
@@ -82,10 +62,57 @@ public class StringSelectionWindow extends StandardWindow {
                 .build();
     }
 
-    public void renderPage(int progress) {
-        logArea.clear();
-        for (int i = progress; (i < (progress + logArea.getHeight() - 2)) && (i < choices.size()); i++) {
-            logArea.addListItem( " " + (i+1) + ": " + choices.get(i));
+    public void renderPage() {
+        box.clear();
+        components.clear();
+        //Replace the vbox
+        VBox newVbox = getVbox();
+        components.add(newVbox);
+        vbox = newVbox;
+        radioButtonGroup = Components.radioButtonGroup().build();
+        //Add the radioboxes to the new vbox
+        for (int i = 0; i < (vbox.getHeight() - 2); i++) {
+            int actualItem = page * (vbox.getHeight() - 2) + i;
+            if (actualItem < choices.size()) {
+                RadioButton rb = Components.radioButton().withKey(""  + (actualItem + 1)).withText("#" + actualItem + " : " + choices.get(i)).build();
+                radioButtonGroup.addComponent(rb);
+                vbox.addComponent(rb);
+            }
+        }
+        button = Components.button().withText("OK").withAlignmentWithin(box, ComponentAlignment.BOTTOM_CENTER).build();
+        next = Components.button().withText("NEXT >").withSize(8,1).withAlignmentWithin(box, ComponentAlignment.TOP_RIGHT).build();
+        prev = Components.button().withText("< PREV").withSize(8,1).withAlignmentAround(next, ComponentAlignment.LEFT_CENTER).build();
+        button.handleComponentEvents(ComponentEventType.ACTIVATED, event -> {
+            if (radioButtonGroup.getSelectedButton().isPresent()) {
+                System.out.println(Integer.parseInt(radioButtonGroup.getSelectedButton().get().getKey()) - 1 );
+                callback.callback(Integer.parseInt(radioButtonGroup.getSelectedButton().get().getKey()) - 1 );
+                finish();
+            }
+            return UIEventResponse.pass();
+        });
+        next.handleComponentEvents(ComponentEventType.ACTIVATED, event -> {
+            if (page < choices.size() / (vbox.getHeight() - 2)) {
+                page++;
+                renderPage();
+            }
+            return UIEventResponse.pass();
+        });
+        prev.handleComponentEvents(ComponentEventType.ACTIVATED, event -> {
+            if (page > 0) {
+                page--;
+                renderPage();
+            }
+            return UIEventResponse.pass();
+        });
+        components.add(Components.header().withText(header).withAlignmentWithin(box, ComponentAlignment.TOP_LEFT).build());
+        if (choices.size() / (vbox.getHeight() - 2) > 1 ) {
+            components.add(next);
+            components.add(prev);
+
+        }
+        components.add(button);
+        for (Component c : components) {
+            box.addComponent(c);
         }
     }
 

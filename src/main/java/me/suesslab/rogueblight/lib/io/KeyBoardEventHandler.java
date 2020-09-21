@@ -1,10 +1,7 @@
 package me.suesslab.rogueblight.lib.io;
 
 import me.suesslab.rogueblight.uix.InteractiveEntityController;
-import org.hexworks.zircon.api.uievent.KeyboardEvent;
-import org.hexworks.zircon.api.uievent.MouseEvent;
-import org.hexworks.zircon.api.uievent.UIEventResponse;
-import org.hexworks.zircon.api.uievent.UIEventType;
+import org.hexworks.zircon.api.uievent.*;
 
 public class KeyBoardEventHandler extends InputHandler {
 
@@ -15,11 +12,20 @@ public class KeyBoardEventHandler extends InputHandler {
 
     @Override
     public UIEventResponse handleKeyboardEvent(KeyboardEvent event) {
-        return null;
+        if (event.getCode().equals(KeyCode.KEY_G)) {
+            interactiveEntityController.openPickupMenu();
+        }
+        else if (event.getCode().equals(KeyCode.KEY_D)) {
+            interactiveEntityController.openDropMenu();
+        }
+        else if (event.getCode().equals(KeyCode.SLASH)) {
+            interactiveEntityController.openLogMenu();
+        }
+        return UIEventResponse.pass();
     }
 
     @Override
     public UIEventResponse handleMouseEvent(MouseEvent event) {
-        return null;
+        return UIEventResponse.pass();
     }
 }

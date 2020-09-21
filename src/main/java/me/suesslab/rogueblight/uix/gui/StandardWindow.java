@@ -12,8 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class StandardWindow extends  ThreadedFragment {
     protected Panel box;
-
+    protected String header;
     public StandardWindow(String header, Screen screen) {
+        this.header = header;
         box = Components.panel()
                 .withSize(screen.getSize().minus(Size.create(10,10)))
                 .withDecorations(ComponentDecorations.box(BoxType.DOUBLE))

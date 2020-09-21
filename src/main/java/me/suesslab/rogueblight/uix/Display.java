@@ -68,28 +68,35 @@ public class Display implements ISubsystem {
     @Override
     public void init(SubsystemManager manager) {
         this.manager = manager;
-        tileGrid = SwingApplications.startTileGrid(AppConfig.newBuilder().withSize(60, 30).withDefaultTileset(CP437TilesetResources.bisasam16x16()).build());
+        tileGrid = SwingApplications.startTileGrid(AppConfig.newBuilder().withSize(60, 30).withDefaultTileset(CP437TilesetResources.yayo16x16()).build());
         screen  = Screen.create(tileGrid);
         screen.display();
-        screen.setTheme(ColorThemes.amigaOs());
+        screen.setTheme(ColorThemes.adriftInDreams());
         //addMessage("hello", "this is a", false);
         ArrayList<String> testArray = new ArrayList<>();
         for (int i = 0; i < 200; i++) {
             testArray.add("option" + i);
         }
-        addStringSelectionWindow("test", testArray, true, this::selection);
+        addMultipleStringSelectionWindow("test", testArray, true, this::selection);
         screen.display();
         thread = new ScreenRendererThread();
         thread.start();
     }
 
-    public void selection(Integer selection) {
+    public void selection(List<Integer> selection) {
         System.out.println(selection);
     }
 
 
-    public void addMultipleStringSelectionWindow(String promptName, List<String> choices, boolean blocking) {
-        //screen.addComponent(Components);
+    public void addMultipleStringSelectionWindow(String promptName, List<String> choices, boolean blocking, MultiStringSelectionWindow.Callback t) {
+        ThreadedFragment tf = new MultiStringSelectionWindow(promptName, choices, screen, t);
+        AttachedComponent ac = screen.addFragment(tf);
+        OpenMenu om = new OpenMenu(ac, tf);
+        if (blocking) {
+            om.waitForClose();
+        } else {
+            openMenus.add(om);
+        }
     }
 
     public void addStringSelectionWindow(String promptName, List<String> choices, boolean blocking, StringSelectionWindow.Callback t) {
@@ -142,11 +149,13 @@ public class Display implements ISubsystem {
                     }
 
                 }
+                /*
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                 */
             }
 
         }
@@ -208,7 +217,7 @@ public class Display implements ISubsystem {
     @Override
     public void stop() {
         //TODO: Remove deprecated method.
-        thread.stop();
+        //thread.stop();
     }
 
 }
