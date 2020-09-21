@@ -150,7 +150,7 @@ public class InteractiveEntityController extends EntityController implements IFr
         //        cursorPosition.add(new Vector(.1d, 0));
         //        return true;
         //}
-        //return false;
+        return false;
     }
 
     private volatile List<Item> itemDropQueue = null;
@@ -167,16 +167,20 @@ public class InteractiveEntityController extends EntityController implements IFr
         itemDropQueue = drops;
     }
     private void dropQueuedItems() {
-        Iterator<Item> itemIterator = itemDropQueue.iterator();
-        while (itemIterator.hasNext()) {
-            Item i = itemIterator.next();
-            dropItem(i.getUUID());
-            nextMoveTick = entity.getWorld().getTick() + 5;
-        }
-        itemDropQueue = null;
+        actionQueue.add(() -> {
+            int addedTicks = 0;
+            Iterator<Item> itemIterator = itemDropQueue.iterator();
+            while (itemIterator.hasNext()) {
+                Item i = itemIterator.next();
+                dropItem(i.getUUID());
+                addedTicks++;
+            }
+            itemDropQueue = null;
+            return addedTicks * 5; //TODO: Factor in speed.
+        });
     }
     public boolean openDropMenu() {
-        if ((controller.dropKeyPressed()) && (display.isMenuOpen() == false)) {
+        if ((display.isMenuOpen() == false) && entity.body.getInventoryComponent().isPresent()) {
             Inventory i = entity.body.getInventoryComponent().get();
  //           display.addItemSelectionWindow("Drop which items?", i.getItems(),this::dropInventoryItemCallback, false);
             return true;
@@ -297,10 +301,14 @@ public class InteractiveEntityController extends EntityController implements IFr
     //throw item code
     private volatile Item throwItemQueue = null;
     private void throwItem(UUID item, Vector force) {
-        Entity thrownItem = dropItem(item);
-        ThrowLaunchInteraction interaction = new ThrowLaunchInteraction(entity, thrownItem);
-        entity.sendInteraction(interaction);
-        thrownItem.body.getPhysicalComponent().ifPresent(component -> component.impartForce(interaction, force));
+        actionQueue.add(() -> {
+            Entity thrownItem = dropItem(item);
+            ThrowLaunchInteraction interaction = new ThrowLaunchInteraction(entity, thrownItem);
+            entity.sendInteraction(interaction);
+            thrownItem.body.getPhysicalComponent().ifPresent(component -> component.impartForce(interaction, force));
+            return 5; //TODO Add appropriate values.
+        });
+
     }
     private void throwItemCallback(Optional<Item> throwableItem) {
         throwableItem.ifPresent(item -> throwItemQueue=item);
@@ -313,7 +321,7 @@ public class InteractiveEntityController extends EntityController implements IFr
         throwItemQueue = null;
     }
     private boolean openThrowItemMenu() {
-        if (!display.isMenuOpen() && controller.throwKeyPressed() && entity.body.getInventoryComponent().isPresent()) {
+        if (!display.isMenuOpen() && entity.body.getInventoryComponent().isPresent()) {
             Inventory i = entity.body.getInventoryComponent().get();
             //display.addItemSelectionWindow("Throw which item?", "Select item", i.getItems(), this::throwItemCallback, false);
             return true;
