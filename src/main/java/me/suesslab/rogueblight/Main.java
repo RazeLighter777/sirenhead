@@ -4,7 +4,7 @@ package me.suesslab.rogueblight;
 import me.suesslab.rogueblight.basegame.BaseGamePlugin;
 import me.suesslab.rogueblight.lib.*;
 import me.suesslab.rogueblight.lib.audio.AudioManager;
-import me.suesslab.rogueblight.uix.Display;
+import me.suesslab.rogueblight.entity.interactive.ZirconDisplay;
 
 import java.util.Arrays;
 
@@ -15,10 +15,10 @@ public class Main {
     public static void main(String[] args) {
         Registry registry = new Registry();
         LevelManager lvm = new LevelManager(registry);
-        Display display = new Display();
+        ZirconDisplay zirconDisplay = new ZirconDisplay();
         AudioManager audioManager = new AudioManager();
-        GameController gameController = new GameController(registry, lvm, display, audioManager);
-        SubsystemManager partialManager = new SubsystemManager(Arrays.asList(registry, lvm, display, gameController, audioManager));
+        GameController gameController = new GameController(registry, lvm, zirconDisplay, audioManager);
+        SubsystemManager partialManager = new SubsystemManager(Arrays.asList(registry, lvm, zirconDisplay, gameController, audioManager));
         registry.addPlugin(new BaseGamePlugin());
         //KeyBoardController controller = new KeyBoardController(display.terminal);
         //display.setStrokeHandler(controller);

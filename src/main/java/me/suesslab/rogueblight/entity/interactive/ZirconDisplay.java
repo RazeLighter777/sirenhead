@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.suesslab.rogueblight.uix;
+package me.suesslab.rogueblight.entity.interactive;
 
 
 import java.io.File;
@@ -14,6 +14,8 @@ import com.googlecode.lanterna.TextCharacter;
 import me.suesslab.rogueblight.SubsystemManager;
 import me.suesslab.rogueblight.item.Item;
 import me.suesslab.rogueblight.lib.ISubsystem;
+import me.suesslab.rogueblight.uix.IFrameProvider;
+import me.suesslab.rogueblight.uix.OpenMenu;
 import me.suesslab.rogueblight.uix.gui.*;
 import org.hexworks.zircon.api.CP437TilesetResources;
 import org.hexworks.zircon.api.ColorThemes;
@@ -29,7 +31,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 /**
  * @author justin
  */
-public class Display implements ISubsystem {
+public class ZirconDisplay implements ISubsystem {
 
 
     private SubsystemManager manager;
@@ -39,7 +41,7 @@ public class Display implements ISubsystem {
     private final static Object displayLock = new Object();
     private Thread thread;
     //private IKeyStrokeHandler strokeHandler;
-    private CopyOnWriteArrayList<OpenMenu> openMenus;
+    CopyOnWriteArrayList<OpenMenu> openMenus;
     TileGrid tileGrid;
     Screen screen;
 
@@ -51,7 +53,7 @@ public class Display implements ISubsystem {
 
     private volatile boolean isMenuOpen = false;
 
-    public Display() {
+    public ZirconDisplay() {
         openMenus = new CopyOnWriteArrayList<>();
     }
 
@@ -88,39 +90,8 @@ public class Display implements ISubsystem {
     }
 
 
-    public void addMultipleStringSelectionWindow(String promptName, List<String> choices, boolean blocking, MultiStringSelectionWindow.Callback t) {
-        ThreadedFragment tf = new MultiStringSelectionWindow(promptName, choices, screen, t);
-        AttachedComponent ac = screen.addFragment(tf);
-        OpenMenu om = new OpenMenu(ac, tf);
-        if (blocking) {
-            om.waitForClose();
-        } else {
-            openMenus.add(om);
-        }
-    }
 
-    public void addStringSelectionWindow(String promptName, List<String> choices, boolean blocking, StringSelectionWindow.Callback t) {
-        ThreadedFragment tf = new StringSelectionWindow(promptName, choices, screen, t);
-        AttachedComponent ac = screen.addFragment(tf);
-        OpenMenu om = new OpenMenu(ac, tf);
-        if (blocking) {
-            om.waitForClose();
-        } else {
-            openMenus.add(om);
-        }
-    }
 
-    public void addMessage(String header, String message, boolean blocking) {
-        ThreadedFragment tf = new NotificationWindow(header, message, screen);
-        AttachedComponent ac = screen.addFragment(tf);
-        if (blocking) {
-            OpenMenu openMenu = new OpenMenu(ac, tf);
-            openMenu.waitForClose();
-
-        } else {
-            openMenus.add(new OpenMenu(ac, tf));
-        }
-    }
 
     public void addItemSelectionWindow(String promptName, List<Item> choices, boolean blocking) {
 
@@ -185,35 +156,6 @@ public class Display implements ISubsystem {
         return 0;
     }
 
-    public String fileSelectionDialog(String title, String desc) {
-        JFileChooser chooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                "JSON Save Files", "json");
-        chooser.setFileFilter(filter);
-        chooser.setCurrentDirectory(new File("."));
-        int returnVal = chooser.showOpenDialog(null);
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
-            System.out.println("You chose to open this file: " +
-                    chooser.getSelectedFile().getAbsolutePath());
-            return chooser.getSelectedFile().getAbsolutePath();
-        }
-        return "";
-    }
-
-    public void listMessage(String promptName, List<String> items, boolean blocking) {
-        ThreadedFragment tc = new ListMessageWindow(promptName, items, screen);
-        AttachedComponent ac = screen.addFragment(tc);
-        if (blocking) {
-            OpenMenu om = new OpenMenu(ac, tc);
-            om.waitForClose();
-        } else {
-            openMenus.add(new OpenMenu(ac, tc));
-        }
-    }
-
-    public void addItemSelectionWindow(String promptName, String message, List<Item> items, boolean blocking) {
-
-    }
     @Override
     public void stop() {
         //TODO: Remove deprecated method.

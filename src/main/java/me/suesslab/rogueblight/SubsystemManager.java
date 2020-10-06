@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 
 import me.suesslab.rogueblight.lib.Registry;
 import me.suesslab.rogueblight.lib.ISubsystem;
-import me.suesslab.rogueblight.uix.Display;
+import me.suesslab.rogueblight.entity.interactive.ZirconDisplay;
 
 /**
  *
@@ -36,7 +36,7 @@ public class SubsystemManager {
 
     public static SubsystemManager getInstance() {
         if (mInstance == null) {
-            mInstance = new SubsystemManager(Arrays.asList(new Display(), new Registry()));
+            mInstance = new SubsystemManager(Arrays.asList(new ZirconDisplay(), new Registry()));
         }
         return mInstance;
     }

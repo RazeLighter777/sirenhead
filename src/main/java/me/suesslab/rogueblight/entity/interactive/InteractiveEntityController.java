@@ -1,4 +1,4 @@
-package me.suesslab.rogueblight.uix;
+package me.suesslab.rogueblight.entity.interactive;
 
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.TextColor;
@@ -17,15 +17,15 @@ import me.suesslab.rogueblight.lib.Vector;
 import me.suesslab.rogueblight.lib.Position;
 import me.suesslab.rogueblight.literary.StringLog;
 import me.suesslab.rogueblight.tile.Tile;
-import org.hexworks.zircon.api.uievent.*;
+import me.suesslab.rogueblight.uix.IFrameProvider;
 
 import java.util.*;
 import java.util.concurrent.SynchronousQueue;
 
-public class InteractiveEntityController extends EntityController implements IFrameProvider {
+public class InteractiveEntityController extends EntityController {
 
     private Entity entity;
-    private Display display;
+    private IDriver display;
     private SubsystemManager manager;
     private List<List<TextCharacter>> currentFrame;
    //private IActionSupplier controller;
@@ -38,27 +38,17 @@ public class InteractiveEntityController extends EntityController implements IFr
         public int action();
     }
     private Queue<action> actionQueue = new SynchronousQueue<>();
-    public InteractiveEntityController(Entity e, Display display) {
+    public InteractiveEntityController(Entity e, IDriver zirconDisplay) {
         super(e);
         //this.controller = controller;
-        this.display = display;
+        this.display = zirconDisplay;
         currentFrame = new ArrayList<>();
         this.entity = e;
         relevantInteractionsLog = new StringLog(100);
         e.getData().addProperty("isLocalPlayer", true);
     }
 
-
-
-    @Override
-    public Optional<List<List<TextCharacter>>> getFrame() {
-        currentFrame.clear();
-        blankCanvas();
-        constructMap();
-        drawBottomLog();
-        return Optional.of(currentFrame);
-    }
-
+    /*
     private void constructMap() {
         for (int xpos = 1; xpos < display.getScreenX() - 1; xpos++) {
             for (int ypos = 1; ypos < display.getScreenY() - 1; ypos++) {
@@ -106,6 +96,7 @@ public class InteractiveEntityController extends EntityController implements IFr
         }
 
     }
+    */
 
     @Override
     public void update() {

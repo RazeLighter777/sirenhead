@@ -5,7 +5,7 @@ import com.googlecode.lanterna.TextCharacter;
 import me.suesslab.rogueblight.SubsystemManager;
 import me.suesslab.rogueblight.entity.Entity;
 import me.suesslab.rogueblight.lib.audio.AudioManager;
-import me.suesslab.rogueblight.uix.Display;
+import me.suesslab.rogueblight.entity.interactive.ZirconDisplay;
 import me.suesslab.rogueblight.uix.IFrameProvider;
 import me.suesslab.rogueblight.world.World;
 
@@ -16,30 +16,30 @@ public class GameController implements  ISubsystem, IFrameProvider  {
 
     private Registry registry;
     private LevelManager levelManager;
-    private Display display;
+    private ZirconDisplay zirconDisplay;
     private SubsystemManager manager;
     private AudioManager audioManager;
 
-    public GameController(Registry registry, LevelManager lvm, Display display, AudioManager audioManager) {
+    public GameController(Registry registry, LevelManager lvm, ZirconDisplay zirconDisplay, AudioManager audioManager) {
         this.registry = registry;
         this.levelManager = lvm;
-        this.display = display;
+        this.zirconDisplay = zirconDisplay;
         this.audioManager = audioManager;
     }
     @Override
     public void init(SubsystemManager manager) {
-        display.setFrameProvider(this);
+        zirconDisplay.setFrameProvider(this);
         this.manager = manager;
     }
 
     public void startGame() {
         audioManager.setBackgroundSound("mainmenu.MID");
-        display.addMessage("WELCOME", ResourceBundle.getBundle("Game").getString("MOTD"), true);
+        zirconDisplay.addMessage("WELCOME", ResourceBundle.getBundle("Game").getString("MOTD"), true);
         choice = -2;
         while (true) {
 
-            if (!display.isMenuOpen()) {
-               display.addStringSelectionWindow(ResourceBundle.getBundle("Game").getString("Title"), new ArrayList<>(Arrays.asList("SELECT SAVE", "EXIT")), false, this::mainMenuCallBack);
+            if (!zirconDisplay.isMenuOpen()) {
+               zirconDisplay.addStringSelectionWindow(ResourceBundle.getBundle("Game").getString("Title"), new ArrayList<>(Arrays.asList("SELECT SAVE", "EXIT")), false, this::mainMenuCallBack);
             } else {
                 if (newChoice) {
                     if (!executeChoice()) {
@@ -77,15 +77,15 @@ public class GameController implements  ISubsystem, IFrameProvider  {
     }
 
     private void selectSave() {
-        String fileName  = display.fileSelectionDialog("Load your game", "Select a world file (extension is .json)");
+        String fileName  = zirconDisplay.fileSelectionDialog("Load your game", "Select a world file (extension is .json)");
         File file = new File(fileName);
         if (!file.exists() ||  !fileName.endsWith(".json")) {
-            display.addMessage("EAT MY ASS", "That file doesn't have the right extension. You need a .json", true);
+            zirconDisplay.addMessage("EAT MY ASS", "That file doesn't have the right extension. You need a .json", true);
         }
         try {
             FileReader fileReader = new FileReader(file);
             World world = new World(levelManager, JsonParser.parseReader(fileReader).getAsJsonObject());
-            display.addMessage("Great Victory!", "Once upon a time, angels ruled the earth. \nThose destined as traitors were cast down to earth. You inhabit the remnants.", true);
+            zirconDisplay.addMessage("Great Victory!", "Once upon a time, angels ruled the earth. \nThose destined as traitors were cast down to earth. You inhabit the remnants.", true);
             audioManager.muteBackgroundSounds();
             //Attach to the first local player in the save.
             Entity player = null;
@@ -100,7 +100,7 @@ public class GameController implements  ISubsystem, IFrameProvider  {
                     break;
                 }
             }
-            display.closeGui();
+            zirconDisplay.closeGui();
             fileReader.close();
             while (true) {
                 world.update();
