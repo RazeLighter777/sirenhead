@@ -173,7 +173,7 @@ public class InteractiveEntityController extends EntityController {
     public boolean openDropMenu() {
         if ((display.isMenuOpen() == false) && entity.body.getInventoryComponent().isPresent()) {
             Inventory i = entity.body.getInventoryComponent().get();
- //           display.addItemSelectionWindow("Drop which items?", i.getItems(),this::dropInventoryItemCallback, false);
+   //         display.addItemSelectionWindow("Drop which items?", i.getItems(),this::dropInventoryItemCallback, false);
             return true;
         }
         return false;

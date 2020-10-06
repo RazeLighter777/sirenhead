@@ -125,7 +125,10 @@ public final class Registry implements ISubsystem {
         }
         Optional<EntityType> type = getEntityTypeByName(config.get("type").getAsString());
         if (type.isPresent()) {
-            return Optional.of(type.get().create(config, world));
+            Entity e = type.get().create(config, world);
+            //TODO: Replace this to allow more remote connection types.
+
+            return Optional.of(e);
         }
         manager.getLogger().warning("Unable to find matching type " + config.get("type").getAsString());
         return Optional.empty();

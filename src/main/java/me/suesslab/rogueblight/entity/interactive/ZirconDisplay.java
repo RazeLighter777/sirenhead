@@ -40,6 +40,7 @@ public class ZirconDisplay implements ISubsystem {
     private IFrameProvider frameProvider;
     private final static Object displayLock = new Object();
     private Thread thread;
+    private ZirconDisplayDriver zDriver;
     //private IKeyStrokeHandler strokeHandler;
     CopyOnWriteArrayList<OpenMenu> openMenus;
     TileGrid tileGrid;
@@ -70,6 +71,7 @@ public class ZirconDisplay implements ISubsystem {
     @Override
     public void init(SubsystemManager manager) {
         this.manager = manager;
+        this.zDriver = new ZirconDisplayDriver(this);
         tileGrid = SwingApplications.startTileGrid(AppConfig.newBuilder().withSize(60, 30).withDefaultTileset(CP437TilesetResources.yayo16x16()).build());
         screen  = Screen.create(tileGrid);
         screen.display();
@@ -79,7 +81,7 @@ public class ZirconDisplay implements ISubsystem {
         for (int i = 0; i < 200; i++) {
             testArray.add("option" + i);
         }
-        addMultipleStringSelectionWindow("test", testArray, true, this::selection);
+        zDriver.addMultipleStringSelectionWindow("test", testArray, true, this::selection);
         screen.display();
         thread = new ScreenRendererThread();
         thread.start();
@@ -147,7 +149,6 @@ public class ZirconDisplay implements ISubsystem {
         return Integer.parseInt(ResourceBundle.getBundle("Game").getString("refreshRate"));
     }
 
-
     public int getScreenX() {
         return 0;
     }
@@ -156,6 +157,9 @@ public class ZirconDisplay implements ISubsystem {
         return 0;
     }
 
+    public  ZirconDisplayDriver getzDriver() {
+        return zDriver;
+    }
     @Override
     public void stop() {
         //TODO: Remove deprecated method.

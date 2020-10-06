@@ -9,10 +9,9 @@ import java.util.List;
 
 public class ZirconDisplayDriver implements  IDriver {
 
-    InteractiveEntityController interactiveEntityController;
     ZirconDisplay zirconDisplay;
-    public ZirconDisplayDriver(InteractiveEntityController interactiveEntityController, ZirconDisplay zirconDisplay) {
-        this.interactiveEntityController = interactiveEntityController;
+    public ZirconDisplayDriver(ZirconDisplay zirconDisplay) {
+
         this.zirconDisplay = zirconDisplay;
     }
 

@@ -26,6 +26,8 @@ public class GameController implements  ISubsystem, IFrameProvider  {
         this.zirconDisplay = zirconDisplay;
         this.audioManager = audioManager;
     }
+
+
     @Override
     public void init(SubsystemManager manager) {
         zirconDisplay.setFrameProvider(this);
@@ -34,12 +36,12 @@ public class GameController implements  ISubsystem, IFrameProvider  {
 
     public void startGame() {
         audioManager.setBackgroundSound("mainmenu.MID");
-        zirconDisplay.addMessage("WELCOME", ResourceBundle.getBundle("Game").getString("MOTD"), true);
+        zirconDisplay.getzDriver().addMessage("WELCOME", ResourceBundle.getBundle("Game").getString("MOTD"), true);
         choice = -2;
         while (true) {
 
             if (!zirconDisplay.isMenuOpen()) {
-               zirconDisplay.addStringSelectionWindow(ResourceBundle.getBundle("Game").getString("Title"), new ArrayList<>(Arrays.asList("SELECT SAVE", "EXIT")), false, this::mainMenuCallBack);
+               zirconDisplay.getzDriver().addStringSelectionWindow(ResourceBundle.getBundle("Game").getString("Title"), new ArrayList<>(Arrays.asList("SELECT SAVE", "EXIT")), false, this::mainMenuCallBack);
             } else {
                 if (newChoice) {
                     if (!executeChoice()) {
@@ -77,15 +79,15 @@ public class GameController implements  ISubsystem, IFrameProvider  {
     }
 
     private void selectSave() {
-        String fileName  = zirconDisplay.fileSelectionDialog("Load your game", "Select a world file (extension is .json)");
+        String fileName  = zirconDisplay.getzDriver().fileSelectionDialog("Load your game", "Select a world file (extension is .json)");
         File file = new File(fileName);
         if (!file.exists() ||  !fileName.endsWith(".json")) {
-            zirconDisplay.addMessage("EAT MY ASS", "That file doesn't have the right extension. You need a .json", true);
+            zirconDisplay.getzDriver().addMessage("EAT MY ASS", "That file doesn't have the right extension. You need a .json", true);
         }
         try {
             FileReader fileReader = new FileReader(file);
             World world = new World(levelManager, JsonParser.parseReader(fileReader).getAsJsonObject());
-            zirconDisplay.addMessage("Great Victory!", "Once upon a time, angels ruled the earth. \nThose destined as traitors were cast down to earth. You inhabit the remnants.", true);
+            zirconDisplay.getzDriver().addMessage("Great Victory!", "Once upon a time, angels ruled the earth. \nThose destined as traitors were cast down to earth. You inhabit the remnants.", true);
             audioManager.muteBackgroundSounds();
             //Attach to the first local player in the save.
             Entity player = null;

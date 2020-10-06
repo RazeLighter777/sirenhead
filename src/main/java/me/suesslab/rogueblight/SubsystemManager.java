@@ -20,6 +20,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
+import me.suesslab.rogueblight.entity.DefaultEntityController;
+import me.suesslab.rogueblight.entity.Entity;
+import me.suesslab.rogueblight.entity.EntityController;
+import me.suesslab.rogueblight.entity.interactive.InteractiveEntityController;
 import me.suesslab.rogueblight.lib.Registry;
 import me.suesslab.rogueblight.lib.ISubsystem;
 import me.suesslab.rogueblight.entity.interactive.ZirconDisplay;
@@ -40,6 +44,8 @@ public class SubsystemManager {
         }
         return mInstance;
     }
+
+
 
     List<ISubsystem> subs;
 
