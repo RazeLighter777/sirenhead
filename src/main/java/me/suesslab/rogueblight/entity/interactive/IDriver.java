@@ -20,7 +20,7 @@ public interface IDriver {
 
     public void addItemSelectionWindow(String promptName, String message, List<Item> items, boolean blocking);
 
-    public String fileSelectionDialog(String title, String desc);
+    //public String fileSelectionDialog(String title, String desc);
 
     public boolean isMenuOpen();
 

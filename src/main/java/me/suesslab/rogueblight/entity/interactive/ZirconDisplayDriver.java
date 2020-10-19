@@ -5,6 +5,8 @@ import me.suesslab.rogueblight.uix.OpenMenu;
 import me.suesslab.rogueblight.uix.gui.*;
 import org.hexworks.zircon.api.component.AttachedComponent;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 
 public class ZirconDisplayDriver implements  IDriver {
@@ -73,10 +75,13 @@ public class ZirconDisplayDriver implements  IDriver {
 
     }
 
-    //XXX Remote sessions shouldn't open file selection dialogs. Should only be a ZirconDisplayDriver thing.
-    @Override
     public String fileSelectionDialog(String title, String desc) {
-        return null;
+        FileDialog dialog = new FileDialog((Frame)null, desc);
+        dialog.setMode(FileDialog.LOAD);
+        dialog.setVisible(true);
+        String file = dialog.getDirectory().toString() + dialog.getFile();
+        System.out.println(file);
+        return file;
     }
 
     @Override

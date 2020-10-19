@@ -18,6 +18,7 @@ public class Main {
         ZirconDisplay zirconDisplay = new ZirconDisplay();
         AudioManager audioManager = new AudioManager();
         GameController gameController = new GameController(registry, lvm, zirconDisplay, audioManager);
+        lvm.setGameController(gameController);
         SubsystemManager partialManager = new SubsystemManager(Arrays.asList(registry, lvm, zirconDisplay, gameController, audioManager));
         registry.addPlugin(new BaseGamePlugin());
         //KeyBoardController controller = new KeyBoardController(display.terminal);

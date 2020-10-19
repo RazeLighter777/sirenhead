@@ -4,6 +4,8 @@ import com.google.gson.JsonParser;
 import com.googlecode.lanterna.TextCharacter;
 import me.suesslab.rogueblight.SubsystemManager;
 import me.suesslab.rogueblight.entity.Entity;
+import me.suesslab.rogueblight.entity.EntityController;
+import me.suesslab.rogueblight.entity.interactive.InteractiveEntityController;
 import me.suesslab.rogueblight.lib.audio.AudioManager;
 import me.suesslab.rogueblight.entity.interactive.ZirconDisplay;
 import me.suesslab.rogueblight.uix.IFrameProvider;
@@ -92,7 +94,7 @@ public class GameController implements  ISubsystem, IFrameProvider  {
             //Attach to the first local player in the save.
             Entity player = null;
             for (Entity e : world.getEntities().values()) {
-                if (e.getData().has("isLocalPlayer")) {
+                if (e.getData().has("declaredController")) {
                     //KeyBoardController controller = new KeyBoardController(display.getTerminal());
                     //display.setStrokeHandler(controller);
                     //InteractiveEntityController playerController = new InteractiveEntityController(e, display, controller);
@@ -106,9 +108,7 @@ public class GameController implements  ISubsystem, IFrameProvider  {
             fileReader.close();
             while (true) {
                 world.update();
-                if (!world.getEntities().containsValue(player)) {
-                    break;
-                }
+                //TODO: Remembers to terminate the loop when the signal is given.
                 if (world.getTick() % 1000 == 0) {
                     manager.getLogger().info("Saving world");
                     FileWriter writer = new FileWriter(file, false);
@@ -128,6 +128,12 @@ public class GameController implements  ISubsystem, IFrameProvider  {
     @Override
     public void stop() {
 
+    }
+
+    public void getSupportedController(String type, Entity e) {
+        if (type.equals("zirconLocal")) {
+            e.body.setEntityController(new InteractiveEntityController(e, zirconDisplay.getzDriver()));
+        }
     }
 
     @Override

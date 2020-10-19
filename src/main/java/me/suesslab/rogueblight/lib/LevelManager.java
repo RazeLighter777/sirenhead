@@ -19,6 +19,16 @@ public class LevelManager implements ISubsystem {
     private SubsystemManager manager;
     private Registry registry;
 
+    public GameController getGameController() {
+        return gameController;
+    }
+
+    public void setGameController(GameController gameController) {
+        this.gameController = gameController;
+    }
+
+    private GameController gameController = null;
+
     //TODO: Allow proper level world management outide getters / setters.
     public World getWorld() {
         return world;
@@ -33,6 +43,7 @@ public class LevelManager implements ISubsystem {
     public LevelManager(Registry registry) {
         this.registry = registry;
     }
+
 
     @Override
     public void init(SubsystemManager manager) {
@@ -56,8 +67,14 @@ public class LevelManager implements ISubsystem {
         Optional<Entity> entity = registry.loadEntityInWorld(input, world);
         if (entity.isPresent()) {
             world.createEntityInWorld(entity.get());
+            //If there is a gameController, construct the appropriate entity controller.
+            if (gameController != null) {
+                System.out.println(entity.get().getQualifiedName());
+                if (entity.get().getData().get("declaredController") != null) {
+                    gameController.getSupportedController(entity.get().getData().get("declaredController").getAsString(), entity.get());
+                }
+            }
         }
-
     }
 
     public void createEntityAtPosition(String typeName, Position pos) {
